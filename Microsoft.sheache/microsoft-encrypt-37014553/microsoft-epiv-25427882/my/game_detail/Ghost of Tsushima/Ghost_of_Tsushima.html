@@ -31,7 +31,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Ambient background (matching index) */
         .ambient-bg {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -58,7 +57,6 @@
             background-repeat: repeat;
         }
 
-        /* Navigation */
         nav {
             position: fixed; top:0; left:0; right:0;
             z-index: 1000; padding: 0 5%; height: 64px;
@@ -91,13 +89,11 @@
         }
         .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,112,255,0.35); }
 
-        /* Main */
         main {
             position: relative; z-index: 2;
             max-width: 1200px; margin: 0 auto; padding: 84px 5% 2rem;
         }
 
-        /* Hero */
         .hero {
             position: relative;
             border-radius: 20px;
@@ -180,7 +176,6 @@
         }
         .size-badge i { color: var(--accent-secondary); }
 
-        /* Buttons */
         .btn {
             padding: 12px 28px; border: none; border-radius: 10px;
             font-size: 0.9rem; font-weight: 700; cursor: pointer;
@@ -199,7 +194,6 @@
         .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
         .btn-lg { padding: 16px 36px; font-size: 1rem; border-radius: 12px; }
 
-        /* Platform selector */
         .platform-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
             margin: 1.5rem 0 1rem;
@@ -227,7 +221,6 @@
             display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
         }
 
-        /* Footer */
         footer {
             position: relative; z-index: 2;
             text-align: center; padding: 2.5rem 5%;
@@ -247,7 +240,6 @@
         .footer-socials a:hover { background: rgba(0,112,255,0.15); border-color: rgba(0,112,255,0.3); color: var(--accent-secondary); transform: translateY(-2px); }
         footer p { color: var(--text-muted); font-size: 0.8rem; }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .hero-content { padding: 2rem 1.5rem; min-height: 380px; }
             .hero-title { font-size: 2rem; }
@@ -273,19 +265,17 @@
     </div>
     <div class="noise-overlay"></div>
 
-    <!-- Navigation -->
     <nav>
         <a href="#" class="logo">JumboStation</a>
-      <!--  <div class="nav-links">
+        <div class="nav-links">
             <a href="#">Games</a>
             <a href="#">JS+</a>
             <a href="#">Store</a>
             <a href="#" class="nav-cta">Sign In</a>
-        </div>  -->
+        </div>
     </nav>
 
     <main>
-        <!-- Hero Section -->
         <div class="hero">
             <div class="hero-bg">
                 <img src="https://developerhost-server.github.io/JyubyubySbiu6ininu/Microsoft.sheache/microsoft-encrypt-37014553/microsoft-epiv-25415130/img/ghost-of-tsushima-4320x3456-12072.avif" alt="Ghost of Tsushima">
@@ -310,20 +300,18 @@
                     </span>
                 </div>
 
-                <!-- Platform Selector -->
                 <div class="platform-grid" id="platformGrid">
                     <button class="platform-btn active" data-platform="windows">
                         <i class="fab fa-windows"></i> Windows
                     </button>
-                  <!--  <button class="platform-btn" data-platform="mac">
+                    <button class="platform-btn" data-platform="mac">
                         <i class="fab fa-apple"></i> macOS
                     </button>
                     <button class="platform-btn" data-platform="linux">
                         <i class="fab fa-linux"></i> Linux
-                    </button> -->
+                    </button>
                 </div>
 
-                <!-- Download Actions -->
                 <div class="download-row">
                     <span class="price-tag"><i class="fas fa-gift" style="font-size:1rem;margin-right:6px;"></i>Free</span>
                     <a href="#" class="btn btn-success btn-lg" id="downloadBtn">
@@ -339,7 +327,6 @@
             </div>
         </div>
 
-        <!-- Simple features list (minimal) -->
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:1rem; margin-bottom:2rem;">
             <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem; display:flex; align-items:center; gap:12px;">
                 <i class="fas fa-globe-asia" style="color:var(--accent-secondary); font-size:1.2rem;"></i>
@@ -391,11 +378,14 @@
             });
         });
 
-        // Download button redirects to the specified URL
+        // ----- DOWNLOAD REDIRECT (breaks out of iframe) -----
+        const targetUrl = "http://127.0.0.1:5000#44gho-78st-93of-77tsus-64hima";
+
         downloadBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            window.top.location.href = "http://127.0.0.1:5000#44gho-78st-93of-77tsus-64hima";
+            window.top.location.href = targetUrl;   // ← breaks out of the iframe
         });
     </script>
 </body>
 </html>
+ 
