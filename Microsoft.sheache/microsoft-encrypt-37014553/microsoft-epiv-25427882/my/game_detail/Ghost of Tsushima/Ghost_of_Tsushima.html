@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ghost of Tsushima — Download | JumboStation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #050508;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --accent: #0070ff;
+            --accent-secondary: #00c8ff;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --card-bg: #12121a;
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient background (matching index) */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+        .ambient-orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(120px); opacity: 0.12;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .ambient-orb:nth-child(1) { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -100px; }
+        .ambient-orb:nth-child(2) { width: 500px; height: 500px; background: #6b00ff; top: 50%; right: -150px; animation-delay: -7s; animation-duration: 25s; }
+        .ambient-orb:nth-child(3) { width: 400px; height: 400px; background: var(--accent-secondary); bottom: -100px; left: 30%; animation-delay: -14s; animation-duration: 22s; }
+        @keyframes orbFloat {
+            0%,100% { transform: translate(0,0) scale(1); }
+            25% { transform: translate(50px,-30px) scale(1.1); }
+            50% { transform: translate(-20px,40px) scale(0.95); }
+            75% { transform: translate(30px,20px) scale(1.05); }
+        }
+        .noise-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            z-index:1; pointer-events:none; opacity:0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed; top:0; left:0; right:0;
+            z-index: 1000; padding: 0 5%; height: 64px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5,5,8,0.6);
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .logo {
+            font-size: 1.3rem; font-weight: 900; letter-spacing: 4px; text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 0%, #8888a0 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; margin-left: 2rem;
+            font-size: 0.85rem; font-weight: 500; text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-cta {
+            margin-left: 2rem !important;
+            padding: 6px 16px !important;
+            background: linear-gradient(135deg, var(--accent), #0050cc) !important;
+            border-radius: 6px !important;
+            color: white !important;
+            font-weight: 600 !important;
+            box-shadow: 0 2px 12px rgba(0,112,255,0.2);
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,112,255,0.35); }
+
+        /* Main */
+        main {
+            position: relative; z-index: 2;
+            max-width: 1200px; margin: 0 auto; padding: 84px 5% 2rem;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            min-height: 460px;
+            border: 1px solid var(--glass-border);
+            background: var(--card-bg);
+            margin-bottom: 2.5rem;
+        }
+        .hero-bg {
+            position: absolute; inset: 0; overflow: hidden;
+        }
+        .hero-bg img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: brightness(0.45) saturate(1.1);
+            transform: scale(1.02);
+        }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(5,5,8,0.97) 0%, rgba(5,5,8,0.6) 30%, rgba(5,5,8,0.2) 60%, rgba(5,5,8,0.5) 100%);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative; z-index: 2;
+            padding: 3rem 3.5rem;
+            display: flex; flex-direction: column;
+            justify-content: flex-end;
+            min-height: 460px;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 4px 14px; background: rgba(0,112,255,0.12);
+            border: 1px solid rgba(0,112,255,0.2); border-radius: 20px;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: var(--accent-secondary);
+            width: fit-content; backdrop-filter: blur(8px);
+            margin-bottom: 1rem;
+        }
+        .hero-badge .dot {
+            width: 6px; height: 6px; background: #00ff88; border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(0,255,136,0.4); } 50% { opacity:0.8; box-shadow:0 0 0 6px rgba(0,255,136,0); } }
+
+        .hero-title {
+            font-size: 3rem; font-weight: 900; line-height: 1.08;
+            margin-bottom: 0.5rem; letter-spacing: -1px;
+            max-width: 640px;
+        }
+        .hero-sub {
+            color: var(--text-secondary); max-width: 540px;
+            margin-bottom: 1.5rem; font-size: 1rem; line-height: 1.7;
+        }
+        .hero-meta {
+            display: flex; flex-wrap: wrap; gap: 1.2rem 2rem; margin-bottom: 1.8rem;
+        }
+        .hero-meta-item {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.8rem; color: var(--text-muted);
+        }
+        .hero-meta-item i { color: var(--accent-secondary); width: 18px; text-align: center; }
+        .hero-meta-item strong { color: var(--text-primary); font-weight: 600; }
+        .rating .stars { color: #ffc107; font-size: 0.85rem; letter-spacing: 2px; }
+        .rating .count { color: var(--text-muted); font-size: 0.75rem; }
+
+        .hero-actions {
+            display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+        }
+        .price-tag {
+            font-size: 1.6rem; font-weight: 900;
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-right: 0.5rem;
+        }
+        .size-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 6px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            font-size: 0.75rem; color: var(--text-muted);
+        }
+        .size-badge i { color: var(--accent-secondary); }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 28px; border: none; border-radius: 10px;
+            font-size: 0.9rem; font-weight: 700; cursor: pointer;
+            text-decoration: none; display: inline-flex; align-items: center;
+            gap: 8px; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #00cc66, #00994d);
+            color: white; box-shadow: 0 4px 20px rgba(0,204,102,0.3);
+        }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,204,102,0.45); }
+        .btn-ghost {
+            background: rgba(255,255,255,0.06); color: var(--text-primary);
+            border: 1px solid var(--border-hover); backdrop-filter: blur(10px);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .btn-lg { padding: 16px 36px; font-size: 1rem; border-radius: 12px; }
+
+        /* Platform selector */
+        .platform-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            margin: 1.5rem 0 1rem;
+            max-width: 400px;
+        }
+        .platform-btn {
+            padding: 12px 10px; border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            cursor: pointer; transition: all 0.3s;
+            text-align: center; font-family: 'Inter', sans-serif;
+            font-weight: 600; font-size: 0.8rem;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+        }
+        .platform-btn i { font-size: 1.3rem; color: var(--text-muted); transition: color 0.3s; }
+        .platform-btn:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.06); color: var(--text-primary); }
+        .platform-btn.active {
+            border-color: rgba(0,200,255,0.4); background: rgba(0,112,255,0.08);
+            color: var(--accent-secondary);
+        }
+        .platform-btn.active i { color: var(--accent-secondary); }
+
+        .download-row {
+            display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            position: relative; z-index: 2;
+            text-align: center; padding: 2.5rem 5%;
+            background: rgba(5,5,8,0.9); border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-primary); }
+        .footer-socials { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.2rem; }
+        .footer-socials a {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; transition: all 0.3s;
+        }
+        .footer-socials a:hover { background: rgba(0,112,255,0.15); border-color: rgba(0,112,255,0.3); color: var(--accent-secondary); transform: translateY(-2px); }
+        footer p { color: var(--text-muted); font-size: 0.8rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content { padding: 2rem 1.5rem; min-height: 380px; }
+            .hero-title { font-size: 2rem; }
+            .hero-sub { font-size: 0.9rem; }
+            .price-tag { font-size: 1.2rem; }
+            .platform-grid { max-width: 100%; }
+            .nav-links a:not(.nav-cta) { display: none; }
+            .hero-meta { gap: 0.8rem 1.2rem; }
+            .hero-actions { flex-direction: column; align-items: stretch; }
+            .hero-actions .btn { justify-content: center; }
+        }
+        @media (max-width: 480px) {
+            .hero-title { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+    </div>
+    <div class="noise-overlay"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">JumboStation</a>
+      <!--  <div class="nav-links">
+            <a href="#">Games</a>
+            <a href="#">JS+</a>
+            <a href="#">Store</a>
+            <a href="#" class="nav-cta">Sign In</a>
+        </div>  -->
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <div class="hero">
+            <div class="hero-bg">
+                <img src="https://developerhost-server.github.io/JyubyubySbiu6ininu/Microsoft.sheache/microsoft-encrypt-37014553/microsoft-epiv-25415130/img/ghost-of-tsushima-4320x3456-12072.avif" alt="Ghost of Tsushima">
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="dot"></span> Now Available — DIRECTOR'S CUT
+                </div>
+                <h1 class="hero-title">Ghost of Tsushima</h1>
+                <p class="hero-sub">
+                    Forge your own path through this open-world action adventure.
+                    The complete DIRECTOR'S CUT on PC.
+                </p>
+                <div class="hero-meta">
+                    <span class="hero-meta-item"><i class="fas fa-tag"></i> <strong>Action RPG</strong></span>
+                    <span class="hero-meta-item"><i class="fas fa-users"></i> <strong>1 Player</strong></span>
+                    <span class="hero-meta-item"><i class="fas fa-calendar"></i> <strong>16 Jul 2024</strong></span>
+                    <span class="hero-meta-item rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="count">(24.8k)</span>
+                    </span>
+                </div>
+
+                <!-- Platform Selector -->
+                <div class="platform-grid" id="platformGrid">
+                    <button class="platform-btn active" data-platform="windows">
+                        <i class="fab fa-windows"></i> Windows
+                    </button>
+                  <!--  <button class="platform-btn" data-platform="mac">
+                        <i class="fab fa-apple"></i> macOS
+                    </button>
+                    <button class="platform-btn" data-platform="linux">
+                        <i class="fab fa-linux"></i> Linux
+                    </button> -->
+                </div>
+
+                <!-- Download Actions -->
+                <div class="download-row">
+                    <span class="price-tag"><i class="fas fa-gift" style="font-size:1rem;margin-right:6px;"></i>Free</span>
+                    <a href="#" class="btn btn-success btn-lg" id="downloadBtn">
+                        <i class="fas fa-download"></i> Download for Windows
+                    </a>
+                    <span class="size-badge"><i class="fas fa-hdd"></i> 58.4 GB</span>
+                </div>
+                <div style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-muted);display:flex;gap:1.2rem;flex-wrap:wrap;">
+                    <span><i class="fas fa-check-circle" style="color:#00cc66;margin-right:4px;"></i> Direct download</span>
+                    <span><i class="fas fa-check-circle" style="color:#00cc66;margin-right:4px;"></i> Secure &amp; verified</span>
+                    <span><i class="fas fa-check-circle" style="color:#00cc66;margin-right:4px;"></i> No DRM</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simple features list (minimal) -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:1rem; margin-bottom:2rem;">
+            <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem; display:flex; align-items:center; gap:12px;">
+                <i class="fas fa-globe-asia" style="color:var(--accent-secondary); font-size:1.2rem;"></i>
+                <span style="font-weight:500;">Open World</span>
+            </div>
+            <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem; display:flex; align-items:center; gap:12px;">
+                <i class="fas fa-sword" style="color:var(--accent-secondary); font-size:1.2rem;"></i>
+                <span style="font-weight:500;">Samurai Combat</span>
+            </div>
+            <div style="background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem; display:flex; align-items:center; gap:12px;">
+                <i class="fas fa-ghost" style="color:var(--accent-secondary); font-size:1.2rem;"></i>
+                <span style="font-weight:500;">Ghost Tactics</span>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Legal</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+        <div class="footer-socials">
+            <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+        </div>
+        <p>&copy; 2026 JumboStation Entertainment. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Platform selector
+        const platformBtns = document.querySelectorAll('.platform-btn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        platformBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                platformBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const platform = btn.dataset.platform;
+                const label = platform.charAt(0).toUpperCase() + platform.slice(1);
+                let icon = 'fab fa-windows';
+                if (platform === 'mac') icon = 'fab fa-apple';
+                else if (platform === 'linux') icon = 'fab fa-linux';
+                downloadBtn.innerHTML = `<i class="${icon}"></i> Download for ${label}`;
+            });
+        });
+
+        // Download button redirects to the specified URL
+        downloadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.top.location.href = "http://127.0.0.1:5000#44gho-78st-93of-77tsus-64hima";
+        });
+    </script>
+</body>
+</html>
