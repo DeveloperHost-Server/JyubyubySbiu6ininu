@@ -361,7 +361,9 @@
     </footer>
 
     <script>
-        // Platform selector
+        // ================================================
+        // PLATFORM SELECTOR
+        // ================================================
         const platformBtns = document.querySelectorAll('.platform-btn');
         const downloadBtn = document.getElementById('downloadBtn');
 
@@ -378,14 +380,23 @@
             });
         });
 
-        // ----- DOWNLOAD REDIRECT (breaks out of iframe) -----
-        const targetUrl = "http://127.0.0.1:5000#44gho-78st-93of-77tsus-64hima";
+        // ================================================
+        // ⭐ CHECKOUT REDIRECTION (same pattern as Store.html)
+        // ================================================
+        function getCheckoutUrl() {
+            // Ghost of Tsushima is a single product download
+            // Redirect to the local server as specified
+            return "http://127.0.0.1:5000#44gho-78st-93of-77tsus-64hima";
+        }
 
+        // Download button click – uses the same pattern as Store.html
         downloadBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            window.top.location.href = targetUrl;   // ← breaks out of the iframe
+            const targetUrl = getCheckoutUrl();
+            if (targetUrl) {
+                window.top.location.href = targetUrl;   // ← breaks out of the iframe
+            }
         });
     </script>
 </body>
 </html>
- 
