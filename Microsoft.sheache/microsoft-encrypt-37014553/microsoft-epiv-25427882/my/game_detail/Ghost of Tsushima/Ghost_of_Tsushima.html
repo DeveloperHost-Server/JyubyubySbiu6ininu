@@ -181,6 +181,7 @@
             font-size: 0.9rem; font-weight: 700; cursor: pointer;
             text-decoration: none; display: inline-flex; align-items: center;
             gap: 8px; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            font-family: 'Inter', sans-serif;
         }
         .btn-success {
             background: linear-gradient(135deg, #00cc66, #00994d);
@@ -254,30 +255,6 @@
         @media (max-width: 480px) {
             .hero-title { font-size: 1.6rem; }
         }
-
-        /* Toast notification for feedback */
-        .toast {
-            position: fixed; bottom: 2rem; right: 2rem;
-            padding: 14px 22px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
-            backdrop-filter: blur(16px);
-            border-left: 3px solid var(--accent-secondary);
-            z-index: 10001;
-            animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .toast__icon { color: var(--accent-secondary); font-size: 1rem; }
-        @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-        .toast--removing { animation: toastOut 0.3s ease forwards; }
-        @keyframes toastOut { to { opacity: 0; transform: translateX(40px); } }
     </style>
 </head>
 <body>
@@ -405,179 +382,35 @@
         });
 
         // ================================================
-        // ⭐ TOAST NOTIFICATION HELPER
+        // ⭐ CHECKOUT REDIRECTION — exact pattern from Store.html
+        //    This is the exact snippet you provided, adapted for this page.
         // ================================================
-        function showToast(message, icon = 'fa-check-circle') {
-            const existing = document.querySelector('.toast');
-            if (existing) existing.remove();
 
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML = `<i class="toast__icon fas ${icon}"></i> ${message}`;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.add('toast--removing');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+        // Function that returns the target URL
+        function getCheckoutUrl() {
+            // Change this to your actual download endpoint
+            return "http://127.0.0.1:53000";
         }
 
-        // ================================================
-        // ⭐ IFRAME BREAKOUT — MULTI-METHOD APPROACH
-        //    Tries every possible way to navigate out
-        // ================================================
-        function breakOutOfIframe(targetUrl) {
-            // Log what we're doing for debugging
-            console.log('[JumboStation] Attempting to break out of iframe to:', targetUrl);
-            console.log('[JumboStation] window.self === window.top?', window.self === window.top);
+        // Get the download button
+        const checkoutBtn = document.getElementById('downloadBtn');
 
-            // METHOD 1: Try window.top (most common, works in same-origin)
-            try {
-                if (window.top !== window.self) {
-                    console.log('[JumboStation] Attempting window.top.location.href');
-                    window.top.location.href = targetUrl;
-                    return true;
-                } else {
-                    console.log('[JumboStation] Not in an iframe (window.top === window.self)');
-                }
-            } catch (e) {
-                console.warn('[JumboStation] window.top.location.href failed:', e.message);
-            }
+        if (checkoutBtn) {
+            // Remove any previous listeners (clone & replace to avoid duplicates)
+            const newBtn = checkoutBtn.cloneNode(true);
+            checkoutBtn.parentNode.replaceChild(newBtn, checkoutBtn);
 
-            // METHOD 2: Try window.parent (if nested iframe)
-            try {
-                if (window.parent !== window.self) {
-                    console.log('[JumboStation] Attempting window.parent.location.href');
-                    window.parent.location.href = targetUrl;
-                    return true;
-                }
-            } catch (e) {
-                console.warn('[JumboStation] window.parent.location.href failed:', e.message);
-            }
-
-            // METHOD 3: Try window.location (fallback — stays in iframe but better than nothing)
-            try {
-                console.log('[JumboStation] Attempting window.location.href (fallback)');
-                window.location.href = targetUrl;
-                return true;
-            } catch (e) {
-                console.warn('[JumboStation] window.location.href failed:', e.message);
-            }
-
-            // METHOD 4: Try window.open (last resort, might open new tab)
-            try {
-                console.log('[JumboStation] Attempting window.open (last resort)');
-                window.open(targetUrl, '_top');
-                return true;
-            } catch (e) {
-                console.warn('[JumboStation] window.open failed:', e.message);
-            }
-
-            showToast('⚠️ Unable to redirect — please click the link manually', 'fa-exclamation-triangle');
-            return false;
-        }
-
-        // ================================================
-        // ⭐ REDIRECT CONFIGURATION
-        //    Change this URL to your actual download endpoint
-        // ================================================
-        const REDIRECT_URL = "https://buy.stripe.com/6oU8wO46hg1idsI5z34AU02";
-
-        // ================================================
-        // ⭐ DOWNLOAD BUTTON — PRIMARY CLICK HANDLER
-        //    Uses both onclick and addEventListener for reliability
-        // ================================================
-
-        // Method 1: Modern event listener
-        downloadBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            // Show feedback
-            const originalText = this.innerHTML;
-            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
-            this.disabled = true;
-
-            // Attempt the redirect
-            const success = breakOutOfIframe(REDIRECT_URL);
-
-            // If redirect didn't happen (e.g., blocked), restore button
-            if (!success) {
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.disabled = false;
-                }, 1000);
-            }
-        });
-
-        // Method 2: onclick attribute as backup (inline handler)
-        downloadBtn.setAttribute('onclick', `
-            event.preventDefault();
-            event.stopPropagation();
-            const btn = this;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirecting...';
-            btn.disabled = true;
-            const success = (function() {
-                ${breakOutOfIframe.toString()}
-                return breakOutOfIframe('${REDIRECT_URL}');
-            })();
-            if (!success) {
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }, 1000);
-            }
-            return false;
-        `);
-
-        // ================================================
-        // ⭐ ALSO TRY TO DETECT IF WE'RE IN AN IFRAME
-        //    AND SHOW A HELPFUL MESSAGE
-        // ================================================
-        (function detectIframe() {
-            const inIframe = window.self !== window.top;
-            if (inIframe) {
-                console.log('[JumboStation] 🔍 Detected: Page is inside an iframe');
-                console.log('[JumboStation] 📍 Top window origin:', document.referrer || 'unknown');
-
-                // Check if we can access the top window
-                try {
-                    const topOrigin = window.top.location.origin;
-                    const currentOrigin = window.location.origin;
-                    console.log('[JumboStation] Top origin:', topOrigin);
-                    console.log('[JumboStation] Current origin:', currentOrigin);
-                    if (topOrigin !== currentOrigin) {
-                        console.log('[JumboStation] ⚠️ Cross-origin iframe detected — redirect may be blocked by browser');
-                        // Show a subtle notice
-                        setTimeout(() => {
-                            showToast('🔗 Clicking "Download" will take you to the game page', 'fa-info-circle');
-                        }, 1500);
-                    } else {
-                        console.log('[JumboStation] ✅ Same-origin iframe — redirect should work');
-                    }
-                } catch (e) {
-                    console.log('[JumboStation] ⚠️ Cannot access top window due to cross-origin policy');
-                    console.log('[JumboStation] Redirect may still work via window.location fallback');
-                }
-            } else {
-                console.log('[JumboStation] 📄 Page is not inside an iframe (direct access)');
-            }
-        })();
-
-        // ================================================
-        // ⭐ KEYBOARD SHORTCUT: Enter or Space on button
-        // ================================================
-        downloadBtn.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
+            // Attach the click listener exactly as in Store.html
+            newBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                this.click();
-            }
-        });
-
-        console.log('[JumboStation] ✅ Download page loaded successfully');
-        console.log('[JumboStation] 📌 Redirect URL:', REDIRECT_URL);
-        console.log('[JumboStation] 💡 Click the download button to break out of the iframe');
+                const targetUrl = getCheckoutUrl();
+                if (targetUrl) {
+                    window.top.location.href = targetUrl;   // ← breaks out of the iframe
+                    // window.location.href = targetUrl;   //⭐ Old ← navigates inside the iframe
+                    // window.open(targetUrl, '_blank');   // ← open new tab
+                }
+            });
+        }
     </script>
 </body>
 </html>
