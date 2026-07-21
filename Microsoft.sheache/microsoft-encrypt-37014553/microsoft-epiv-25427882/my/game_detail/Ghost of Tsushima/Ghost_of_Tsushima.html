@@ -315,6 +315,7 @@
 
                 <div class="download-row">
                     <span class="price-tag"><i class="fas fa-gift" style="font-size:1rem;margin-right:6px;"></i>Free</span>
+                    <!-- ⭐ BUTTON — matches Store.html exactly (button element, not <a>) -->
                     <button class="btn btn-success btn-lg" id="downloadBtn">
                         <i class="fas fa-download"></i> Download for Windows
                     </button>
@@ -382,8 +383,8 @@
         });
 
         // ================================================
-        // ⭐ CHECKOUT REDIRECTION — exact pattern from Store.html
-        //    This is the exact snippet you provided, adapted for this page.
+        // ⭐⭐ EXACT REDIRECTION PATTERN FROM Store.html ⭐⭐
+        //    100% identical to the Store.html checkout pattern
         // ================================================
 
         // Function that returns the target URL
@@ -392,15 +393,16 @@
             return "http://127.0.0.1:5000";
         }
 
-        // Get the download button
+        // Get the button — same ID pattern as Store.html
         const checkoutBtn = document.getElementById('downloadBtn');
 
         if (checkoutBtn) {
             // Remove any previous listeners (clone & replace to avoid duplicates)
+            // — EXACT same as Store.html
             const newBtn = checkoutBtn.cloneNode(true);
             checkoutBtn.parentNode.replaceChild(newBtn, checkoutBtn);
 
-            // Attach the click listener exactly as in Store.html
+            // Attach the click listener — EXACT same as Store.html
             newBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetUrl = getCheckoutUrl();
