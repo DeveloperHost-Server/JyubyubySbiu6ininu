@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en-gb">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Game Details | JumboStation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #050508;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --accent: #0070ff;
+            --accent-secondary: #00c8ff;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --card-bg: #12121a;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-bg-hover: #1a1a26;
+            --coming-soon-color: #ffaa00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .ambient-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+        .ambient-orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(120px); opacity: 0.12;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+        .ambient-orb:nth-child(1) { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -100px; }
+        .ambient-orb:nth-child(2) { width: 500px; height: 500px; background: #6b00ff; top: 50%; right: -150px; animation-delay: -7s; animation-duration: 25s; }
+        .ambient-orb:nth-child(3) { width: 400px; height: 400px; background: var(--accent-secondary); bottom: -100px; left: 30%; animation-delay: -14s; animation-duration: 22s; }
+        @keyframes orbFloat {
+            0%,100% { transform: translate(0,0) scale(1); }
+            25% { transform: translate(50px,-30px) scale(1.1); }
+            50% { transform: translate(-20px,40px) scale(0.95); }
+            75% { transform: translate(30px,20px) scale(1.05); }
+        }
+        .noise-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            z-index:1; pointer-events:none; opacity:0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        nav {
+            position: fixed; top:0; left:0; right:0;
+            z-index: 1000; padding: 0 5%; height: 64px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5,5,8,0.6);
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .logo {
+            font-size: 1.3rem; font-weight: 900; letter-spacing: 4px; text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 0%, #8888a0 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; margin-left: 2rem;
+            font-size: 0.85rem; font-weight: 500; text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-cta {
+            margin-left: 2rem !important;
+            padding: 6px 16px !important;
+            background: linear-gradient(135deg, var(--accent), #0050cc) !important;
+            border-radius: 6px !important;
+            color: white !important;
+            font-weight: 600 !important;
+            box-shadow: 0 2px 12px rgba(0,112,255,0.2);
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,112,255,0.35); }
+
+        main {
+            position: relative; z-index: 2;
+            max-width: 1200px; margin: 0 auto; padding: 84px 5% 2rem;
+        }
+
+        /* ===== HIDE GAME SELECTOR GRID ===== */
+        .game-selector {
+            display: none !important;
+        }
+
+
+        /* ===== GAME SELECTOR GRID
+        .game-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 2rem;
+        }
+        .game-selector__item {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .game-selector__item:hover {
+            border-color: var(--border-hover);
+            background: var(--card-bg-hover);
+            transform: translateY(-2px);
+        }
+        .game-selector__item.active {
+            border-color: var(--accent-secondary);
+            background: rgba(0, 200, 255, 0.08);
+            color: var(--accent-secondary);
+            box-shadow: 0 0 20px rgba(0, 200, 255, 0.1);
+        }
+        .game-selector__item img {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+        .game-selector__item .name {
+            font-size: 0.7rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+          ===== */
+
+
+        /* ===== HERO ===== */
+        .hero {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            min-height: 460px;
+            border: 1px solid var(--glass-border);
+            background: var(--card-bg);
+            margin-bottom: 2.5rem;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .hero--loading {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .hero--loaded {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero-bg {
+            position: absolute; inset: 0; overflow: hidden;
+        }
+        .hero-bg img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: brightness(0.45) saturate(1.1);
+            transform: scale(1.02);
+            transition: transform 8s ease;
+        }
+        .hero:hover .hero-bg img {
+            transform: scale(1.06);
+        }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(5,5,8,0.97) 0%, rgba(5,5,8,0.6) 30%, rgba(5,5,8,0.2) 60%, rgba(5,5,8,0.5) 100%);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative; z-index: 2;
+            padding: 3rem 3.5rem;
+            display: flex; flex-direction: column;
+            justify-content: flex-end;
+            min-height: 460px;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 4px 14px; background: rgba(0,112,255,0.12);
+            border: 1px solid rgba(0,112,255,0.2); border-radius: 20px;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1.5px; color: var(--accent-secondary);
+            width: fit-content; backdrop-filter: blur(8px);
+            margin-bottom: 1rem;
+        }
+        .hero-badge .dot {
+            width: 6px; height: 6px; background: #00ff88; border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(0,255,136,0.4); } 50% { opacity:0.8; box-shadow:0 0 0 6px rgba(0,255,136,0); } }
+
+        .hero-title {
+            font-size: 3rem; font-weight: 900; line-height: 1.08;
+            margin-bottom: 0.5rem; letter-spacing: -1px;
+            max-width: 640px;
+        }
+        .hero-sub {
+            color: var(--text-secondary); max-width: 540px;
+            margin-bottom: 1.5rem; font-size: 1rem; line-height: 1.7;
+        }
+        .hero-meta {
+            display: flex; flex-wrap: wrap; gap: 1.2rem 2rem; margin-bottom: 1.8rem;
+        }
+        .hero-meta-item {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.8rem; color: var(--text-muted);
+        }
+        .hero-meta-item i { color: var(--accent-secondary); width: 18px; text-align: center; }
+        .hero-meta-item strong { color: var(--text-primary); font-weight: 600; }
+        .rating .stars { color: #ffc107; font-size: 0.85rem; letter-spacing: 2px; }
+        .rating .count { color: var(--text-muted); font-size: 0.75rem; }
+
+        .hero-actions {
+            display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+        }
+        .price-tag {
+            font-size: 1.6rem; font-weight: 900;
+            margin-right: 0.5rem;
+        }
+        .price-tag.free {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .price-tag.paid {
+            background: linear-gradient(135deg, #fff, #aaa);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .size-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 6px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            font-size: 0.75rem; color: var(--text-muted);
+        }
+        .size-badge i { color: var(--accent-secondary); }
+
+        .btn {
+            padding: 12px 28px; border: none; border-radius: 10px;
+            font-size: 0.9rem; font-weight: 700; cursor: pointer;
+            text-decoration: none; display: inline-flex; align-items: center;
+            gap: 8px; transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #00cc66, #00994d);
+            color: white; box-shadow: 0 4px 20px rgba(0,204,102,0.3);
+        }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,204,102,0.45); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #0050cc);
+            color: white; box-shadow: 0 4px 20px rgba(0,112,255,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,112,255,0.45); }
+        .btn-ghost {
+            background: rgba(255,255,255,0.06); color: var(--text-primary);
+            border: 1px solid var(--border-hover); backdrop-filter: blur(10px);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .btn-lg { padding: 16px 36px; font-size: 1rem; border-radius: 12px; }
+        .btn-sm { padding: 8px 18px; font-size: 0.8rem; border-radius: 8px; }
+
+        /* ===== PLATFORM GRID ===== */
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 420px;
+            margin: 1.5rem 0 1rem;
+        }
+        .platform-btn {
+            padding: 12px 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+        }
+        .platform-btn i {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            transition: color 0.3s;
+        }
+        .platform-btn:hover:not(:disabled) {
+            border-color: var(--border-hover);
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary);
+        }
+        .platform-btn.active {
+            border-color: rgba(0,200,255,0.4);
+            background: rgba(0,112,255,0.08);
+            color: var(--accent-secondary);
+        }
+        .platform-btn.active i {
+            color: var(--accent-secondary);
+        }
+
+        /* Disabled / Coming Soon State */
+        .platform-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-color: var(--border);
+            background: rgba(255,255,255,0.02);
+            filter: grayscale(0.3);
+        }
+        .platform-btn:disabled:hover {
+            transform: none;
+            border-color: var(--border);
+            background: rgba(255,255,255,0.02);
+        }
+        .platform-btn:disabled i {
+            color: var(--text-muted);
+        }
+
+        .platform-status {
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1px 6px;
+            border-radius: 3px;
+            background: rgba(0, 255, 170, 0.12);
+            color: #00cc66;
+        }
+        .platform-status.coming-soon {
+            background: rgba(255, 170, 0, 0.15);
+            color: var(--coming-soon-color);
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .download-row {
+            display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: border-color 0.3s;
+        }
+        .feature-card:hover {
+            border-color: rgba(0, 112, 255, 0.2);
+        }
+        .feature-card i {
+            color: var(--accent-secondary);
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        .feature-card span {
+            font-weight: 500;
+        }
+
+        footer {
+            position: relative; z-index: 2;
+            text-align: center; padding: 2.5rem 5%;
+            background: rgba(5,5,8,0.9); border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+        .footer-links { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--text-primary); }
+        .footer-socials { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.2rem; }
+        .footer-socials a {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); text-decoration: none; transition: all 0.3s;
+        }
+        .footer-socials a:hover { background: rgba(0,112,255,0.15); border-color: rgba(0,112,255,0.3); color: var(--accent-secondary); transform: translateY(-2px); }
+        footer p { color: var(--text-muted); font-size: 0.8rem; }
+
+        @media (max-width: 768px) {
+            .hero-content { padding: 2rem 1.5rem; min-height: 380px; }
+            .hero-title { font-size: 2rem; }
+            .hero-sub { font-size: 0.9rem; }
+            .price-tag { font-size: 1.2rem; }
+            .platform-grid { max-width: 100%; }
+            .nav-links a:not(.nav-cta) { display: none; }
+            .hero-meta { gap: 0.8rem 1.2rem; }
+            .hero-actions { flex-direction: column; align-items: stretch; }
+            .hero-actions .btn { justify-content: center; }
+            .game-selector { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
+            .game-selector__item img { width: 36px; height: 36px; }
+        }
+        @media (max-width: 480px) {
+            .hero-title { font-size: 1.6rem; }
+            .game-selector { grid-template-columns: repeat(3, 1fr); }
+            .game-selector__item .name { font-size: 0.6rem; }
+            .platform-grid { grid-template-columns: 1fr; max-width: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+        <div class="ambient-orb"></div>
+    </div>
+    <div class="noise-overlay"></div>
+
+    <nav>
+        <a href="#" class="logo">JumboStation</a>
+    <!--    <div class="nav-links">
+            <a href="#">Games</a>
+            <a href="#">JS+</a>
+            <a href="#">Store</a>
+            <a href="#" class="nav-cta">Sign In</a>
+        </div>    -->
+    </nav>
+
+    <main>
+        <!-- ===== GAME SELECTOR ===== -->
+        <div class="game-selector" id="gameSelector"></div>
+
+        <!-- ===== HERO ===== -->
+        <div class="hero hero--loading" id="heroContainer">
+            <div class="hero-bg" id="heroBg">
+                <img id="heroImage" src="" alt="">
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="hero-badge" id="heroBadge">
+                    <span class="dot"></span> <span id="heroBadgeText">Now Available</span>
+                </div>
+                <h1 class="hero-title" id="heroTitle">Game Title</h1>
+                <p class="hero-sub" id="heroSub">Game description goes here.</p>
+                <div class="hero-meta" id="heroMeta">
+                    <span class="hero-meta-item"><i class="fas fa-tag"></i> <strong id="metaGenre">Genre</strong></span>
+                    <span class="hero-meta-item"><i class="fas fa-users"></i> <strong id="metaPlayers">1 Player</strong></span>
+                    <span class="hero-meta-item"><i class="fas fa-calendar"></i> <strong id="metaRelease">Release Date</strong></span>
+                    <span class="hero-meta-item rating" id="metaRating">
+                        <span class="stars">★★★★★</span>
+                        <span class="count" id="metaRatingCount">(0)</span>
+                    </span>
+                </div>
+
+                <!-- ===== PLATFORM SELECTOR (Windows Active, others Coming Soon) ===== -->
+                <div class="platform-grid" id="platformGrid">
+                    <button class="platform-btn active" data-platform="windows">
+                        <i class="fab fa-windows"></i> Windows
+                        <span class="platform-status">Available</span>
+                    </button>
+                    <button class="platform-btn" data-platform="mac" disabled>
+                        <i class="fab fa-apple"></i> macOS
+                        <span class="platform-status coming-soon">Coming Soon</span>
+                    </button>
+                    <button class="platform-btn" data-platform="linux" disabled>
+                        <i class="fab fa-linux"></i> Linux
+                        <span class="platform-status coming-soon">Coming Soon</span>
+                    </button>
+                </div>
+
+                <div class="download-row">
+                    <span class="price-tag" id="priceTag">Free</span>
+                    <button class="btn btn-success btn-lg" id="downloadBtn">
+                        <i class="fab fa-windows"></i> Download for Windows
+                    </button>
+                    <span class="size-badge" id="sizeBadge"><i class="fas fa-hdd"></i> 0 GB</span>
+                </div>
+                <div style="margin-top:0.75rem;font-size:0.75rem;color:var(--text-muted);display:flex;gap:1.2rem;flex-wrap:wrap;">
+                    <span><i class="fas fa-check-circle" style="color:#00cc66;margin-right:4px;"></i> Direct download</span>
+                    <span><i class="fas fa-check-circle" style="color:#00cc66;margin-right:4px;"></i> Secure &amp; verified</span>
+                    <span><i class="fas fa-check-circle" style="color:#00cc66;margin-right:4px;"></i> No DRM</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== FEATURES ===== -->
+        <div class="features-grid" id="featuresGrid"></div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Legal</a>
+            <a href="#">Privacy</a>
+            <a href="#">Terms</a>
+        </div>
+        <div class="footer-socials">
+            <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+        </div>
+        <p>&copy; 2026 JumboStation Entertainment. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // ================================================
+        // ⭐ GAME DATA — Add your games here
+        // ================================================
+        const GAMES = [{
+            id: 'ghost-of-tsushima',
+            slug: 'ghost-of-tsushima',
+            name: 'Ghost of Tsushima',
+            edition: 'DIRECTOR\'S CUT',
+            badge: 'Now Available',
+            description: 'Forge your own path through this open-world action adventure. The complete DIRECTOR\'S CUT on PC.',
+            genre: 'Action RPG',
+            players: '1 Player',
+            release: '16 Jul 2024',
+            rating: 4.9,
+            ratingCount: '24.8k',
+            price: 0,
+            priceLabel: 'Free',
+            size: '58.4 GB',
+            features: ['Open World', 'Samurai Combat', 'Ghost Tactics', 'Stunning Visuals', 'Immersive Story'],
+            image: 'https://developerhost-server.github.io/JyubyubySbiu6ininu/Microsoft.sheache/microsoft-encrypt-37014553/microsoft-epiv-25415130/img/ghost-of-tsushima-4320x3456-12072.avif',
+            redirectUrl: 'http://127.0.0.1:5000#magnet:?xt=urn:btih:5e0fb5d079f91918abf0a36389b1448be299f55e&dn=Ghost.of.Tsushima.Directors.Cut-PLAZA&xl=58400000000'
+        }, {
+            id: 'kena',
+            slug: 'kena',
+            name: 'Kena: Bridge of Spirits',
+            edition: 'Ultimate Edition',
+            badge: 'Now Available',
+            description: 'A story-driven, action adventure combining exploration with fast-paced combat. Help free the spirits trapped in a forgotten village.',
+            genre: 'Action Adventure',
+            players: '1 Player',
+            release: '21 Sep 2021',
+            rating: 4.7,
+            ratingCount: '12.3k',
+            price: 0,
+            priceLabel: 'Free',
+            size: '25.6 GB',
+            features: ['Action Adventure', 'Spirit Companions', 'Puzzle Solving', 'Beautiful Art', 'Emotional Story'],
+            image: 'https://developerhost-server.github.io/JyubyubySbiu6ininu/Microsoft.sheache/microsoft-encrypt-37014553/microsoft-epiv-25415130/img/371f38aeb670169c78d4197b3c669003.avif',
+            redirectUrl: 'http://127.0.0.1:5000#magnet:?xt=urn:btih:6e0fb5d079f91918abf0a36389b1448be299f55e&dn=Kena.Bridge.of.Spirits-CODEX&xl=25600000000'
+        }, {
+            id: 'uncharted',
+            slug: 'uncharted',
+            name: 'Uncharted 4: A Thief\'s End',
+            edition: 'Standard Edition',
+            badge: 'Popular',
+            description: 'Join Nathan Drake on his greatest adventure yet. A thief\'s end is just the beginning of a legendary journey.',
+            genre: 'Action Adventure',
+            players: '1 Player',
+            release: '10 May 2016',
+            rating: 4.8,
+            ratingCount: '32.1k',
+            price: 8.99,
+            priceLabel: '€8.99',
+            size: '48.2 GB',
+            features: ['Action Adventure', 'Cinematic Story', 'Puzzle Solving', 'Stunning Environments', 'Character Driven'],
+            image: 'https://cdn2.steamgriddb.com/grid/6fe386b00d7a58df2ee236b3bf339e6b.jpg',
+            redirectUrl: 'http://127.0.0.1:5000#magnet:?xt=urn:btih:7e0fb5d079f91918abf0a36389b1448be299f55e&dn=Uncharted.4.A.Thiefs.End-RELOADED&xl=48200000000'
+        }, {
+            id: 'need-for-speed',
+            slug: 'need-for-speed',
+            name: 'Need for Speed™ Rivals',
+            edition: 'Gold Edition',
+            badge: 'On Sale',
+            description: 'Welcome to Redview County, where a street-racing rivalry between cops and racers never stops in an all-out war.',
+            genre: 'Racing',
+            players: '1-2 Players',
+            release: '15 Nov 2013',
+            rating: 4.2,
+            ratingCount: '8.7k',
+            price: 7.99,
+            priceLabel: '€7.99',
+            size: '15.8 GB',
+            features: ['Racing', 'Open World', 'Police Chases', 'Car Customization', 'Multiplayer'],
+            image: 'https://cdn2.steamgriddb.com/grid/38b70e7c3dd337a74d4f77806ab5b330.jpg',
+            redirectUrl: 'http://127.0.0.1:5000#magnet:?xt=urn:btih:8e0fb5d079f91918abf0a36389b1448be299f55e&dn=Need.for.Speed.Rivals-RELOADED&xl=15800000000'
+        }, {
+            id: 'warhammer',
+            slug: 'warhammer',
+            name: 'Warhammer 40,000: Space Marine 2',
+            edition: 'Ultimate Edition',
+            badge: 'New Release',
+            description: 'Step into the armor of a Space Marine. Fight for humanity in the grim darkness of the 41st millennium.',
+            genre: 'Action',
+            players: '1-3 Players',
+            release: '5 Sep 2024',
+            rating: 4.6,
+            ratingCount: '5.2k',
+            price: 12.99,
+            priceLabel: '€12.99',
+            size: '42.1 GB',
+            features: ['Action', 'Co-op Campaign', 'Horde Mode', 'Grim Dark World', 'Heavy Combat'],
+            image: 'https://developerhost-server.github.io/JyubyubySbiu6ininu/Microsoft.sheache/microsoft-encrypt-37014553/microsoft-epiv-25415130/img/35f2992ca1e77711346f44023107fb16.avif',
+            redirectUrl: 'http://127.0.0.1:5000#magnet:?xt=urn:btih:9e0fb5d079f91918abf0a36389b1448be299f55e&dn=Warhammer.40000.Space.Marine.2-RUNE&xl=42100000000'
+        }, {
+            id: 'roblox',
+            slug: 'roblox',
+            name: 'Roblox',
+            edition: 'Free to Play',
+            badge: 'Free',
+            description: 'Explore a universe of millions of games. Create, play, and share with friends in the ultimate metaverse.',
+            genre: 'Multiplayer Online',
+            players: 'Multiplayer',
+            release: '1 Sep 2006',
+            rating: 4.0,
+            ratingCount: '45.6k',
+            price: 0,
+            priceLabel: 'Free',
+            size: '2.4 GB',
+            features: ['Multiplayer', 'Game Creation', 'Social Platform', 'Millions of Games', 'Cross-Platform'],
+            image: 'https://psblog.com.br/wp-content/uploads/2023/09/psblog.com.br-finalmente-roblox-chega-ao-playstation-5-em-outubro-roblox.png',
+            redirectUrl: 'http://127.0.0.1:5000#magnet:?xt=urn:btih:ae0fb5d079f91918abf0a36389b1448be299f55e&dn=Roblox-Installer&xl=2400000000'
+        }];
+
+        // ================================================
+        // ⭐ DOM REFS
+        // ================================================
+        const selector = document.getElementById('gameSelector');
+        const hero = document.getElementById('heroContainer');
+        const heroImg = document.getElementById('heroImage');
+        const heroBadgeText = document.getElementById('heroBadgeText');
+        const heroTitle = document.getElementById('heroTitle');
+        const heroSub = document.getElementById('heroSub');
+        const metaGenre = document.getElementById('metaGenre');
+        const metaPlayers = document.getElementById('metaPlayers');
+        const metaRelease = document.getElementById('metaRelease');
+        const metaRatingCount = document.getElementById('metaRatingCount');
+        const priceTag = document.getElementById('priceTag');
+        const sizeBadge = document.getElementById('sizeBadge');
+        const featuresGrid = document.getElementById('featuresGrid');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // ================================================
+        // ⭐ RENDER GAME SELECTOR
+        // ================================================
+        function renderSelector(activeId) {
+            selector.innerHTML = GAMES.map(g => `
+                <div class="game-selector__item ${g.id === activeId ? 'active' : ''}" data-game="${g.id}">
+                    <img src="${g.image}" alt="${g.name}" loading="lazy">
+                    <span class="name">${g.name}</span>
+                </div>
+            `).join('');
+
+            selector.querySelectorAll('.game-selector__item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const id = el.dataset.game;
+                    history.pushState(null, '', `#${id}`);
+                    loadGame(id);
+                });
+            });
+        }
+
+        // ================================================
+        // ⭐ LOAD GAME DATA
+        // ================================================
+        function loadGame(gameId) {
+            const game = GAMES.find(g => g.id === gameId);
+            if (!game) {
+                const fallback = GAMES[0];
+                if (fallback) loadGame(fallback.id);
+                return;
+            }
+
+            hero.classList.remove('hero--loaded');
+            hero.classList.add('hero--loading');
+
+            setTimeout(() => {
+                heroImg.src = game.image;
+                heroImg.alt = game.name;
+                heroBadgeText.textContent = game.badge;
+                heroTitle.textContent = game.name;
+                heroSub.textContent = game.description;
+                metaGenre.textContent = game.genre;
+                metaPlayers.textContent = game.players;
+                metaRelease.textContent = game.release;
+                metaRatingCount.textContent = `(${game.ratingCount})`;
+
+                if (game.price === 0) {
+                    priceTag.className = 'price-tag free';
+                    priceTag.innerHTML = '<i class="fas fa-gift" style="font-size:1rem;margin-right:6px;"></i>Free';
+                } else {
+                    priceTag.className = 'price-tag paid';
+                    priceTag.textContent = game.priceLabel;
+                }
+
+                sizeBadge.innerHTML = `<i class="fas fa-hdd"></i> ${game.size}`;
+
+                featuresGrid.innerHTML = game.features.map(f => `
+                    <div class="feature-card">
+                        <i class="fas fa-check-circle"></i>
+                        <span>${f}</span>
+                    </div>
+                `).join('');
+
+                // Download button always says Windows
+                downloadBtn.innerHTML = `<i class="fab fa-windows"></i> Download for Windows`;
+
+                renderSelector(game.id);
+
+                hero.classList.remove('hero--loading');
+                hero.classList.add('hero--loaded');
+
+                if (window.location.hash !== `#${game.id}`) {
+                    history.pushState(null, '', `#${game.id}`);
+                }
+            }, 150);
+        }
+
+        // ================================================
+        // ⭐ REDIRECTION (EXACT Store.html pattern)
+        // ================================================
+        function getCheckoutUrl() {
+            const currentId = window.location.hash.replace('#', '') || GAMES[0]?.id;
+            const game = GAMES.find(g => g.id === currentId);
+            return game?.redirectUrl || 'http://127.0.0.1:5000';
+        }
+
+        const checkoutBtn = document.getElementById('downloadBtn');
+        if (checkoutBtn) {
+            const newBtn = checkoutBtn.cloneNode(true);
+            checkoutBtn.parentNode.replaceChild(newBtn, checkoutBtn);
+
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetUrl = getCheckoutUrl();
+                if (targetUrl) {
+                    window.top.location.href = targetUrl;
+                }
+            });
+        }
+
+        // ================================================
+        // ⭐ HASH CHANGE & INIT
+        // ================================================
+        function handleHashChange() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const game = GAMES.find(g => g.id === hash);
+                if (game) {
+                    loadGame(game.id);
+                    return;
+                }
+            }
+            if (GAMES.length) {
+                loadGame(GAMES[0].id);
+            }
+        }
+
+        window.addEventListener('hashchange', handleHashChange);
+        window.addEventListener('popstate', handleHashChange);
+        handleHashChange();
+
+        console.log('🎮 Multi-game detail page (Windows + Coming Soon) loaded!');
+        console.log(`📦 ${GAMES.length} games available`);
+        console.log('💡 Use #game-id in URL to switch games');
+    </script>
+</body>
+</html>
