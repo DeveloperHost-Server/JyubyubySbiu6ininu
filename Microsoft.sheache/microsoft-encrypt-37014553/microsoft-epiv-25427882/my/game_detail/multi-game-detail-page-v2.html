@@ -24,6 +24,11 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+        html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: #333 var(--bg-color); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background: var(--bg-color);
@@ -444,7 +449,7 @@
     <div class="noise-overlay"></div>
 
     <nav>
-        <a href="#" class="logo">JumboStation</a>
+        <a href="#" class="logo">GAMES</a>
     <!--    <div class="nav-links">
             <a href="#">Games</a>
             <a href="#">JS+</a>
