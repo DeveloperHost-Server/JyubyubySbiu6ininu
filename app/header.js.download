@@ -1,0 +1,51 @@
+var _____WB$wombat$assign$function_____=function(name){return (globalThis._wb_wombat && globalThis._wb_wombat.local_init && globalThis._wb_wombat.local_init(name))||globalThis[name];};if(!globalThis.__WB_pmw){globalThis.__WB_pmw=function(obj){this.__WB_source=obj;return this;}}{
+let window = _____WB$wombat$assign$function_____("window");
+let self = _____WB$wombat$assign$function_____("self");
+let document = _____WB$wombat$assign$function_____("document");
+let location = _____WB$wombat$assign$function_____("location");
+let top = _____WB$wombat$assign$function_____("top");
+let parent = _____WB$wombat$assign$function_____("parent");
+let frames = _____WB$wombat$assign$function_____("frames");
+let opener = _____WB$wombat$assign$function_____("opener");
+
+function setTimezoneCookies()
+{
+	var now = new Date();
+	var expire = new Date();
+
+	// One year expiration, this way we don't need to wait at least one page
+	// load to have accurate timezone info each session, but only each time the user
+	// comes with cleared cookies
+	expire.setTime( now.getTime() + 3600000*24*365 );
+	tzOffset = now.getTimezoneOffset() * -1 * 60;
+	isDST = 0;
+	document.cookie = "timezoneOffset=" + tzOffset + "," + isDST + ";expires="+expire.toGMTString() + ";path=/";
+}
+
+
+// We always want to have the timezone cookie set for PHP to use
+setTimezoneCookies();
+
+}
+
+/*
+     FILE ARCHIVED ON 19:23:55 Jun 15, 2012 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 16:02:59 Aug 12, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  capture_cache.get: 0.427
+  captures_list: 0.477
+  exclusion.robots: 0.067
+  exclusion.robots.policy: 0.057
+  esindex: 0.007
+  cdx.remote: 16.659
+  LoadShardBlock: 85.341 (3)
+  PetaboxLoader3.datanode: 91.135 (4)
+  load_resource: 248.38
+  PetaboxLoader3.resolve: 222.652
+*/

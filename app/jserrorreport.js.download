@@ -1,0 +1,58 @@
+var _____WB$wombat$assign$function_____=function(name){return (globalThis._wb_wombat && globalThis._wb_wombat.local_init && globalThis._wb_wombat.local_init(name))||globalThis[name];};if(!globalThis.__WB_pmw){globalThis.__WB_pmw=function(obj){this.__WB_source=obj;return this;}}{
+let window = _____WB$wombat$assign$function_____("window");
+let self = _____WB$wombat$assign$function_____("self");
+let document = _____WB$wombat$assign$function_____("document");
+let location = _____WB$wombat$assign$function_____("location");
+let top = _____WB$wombat$assign$function_____("top");
+let parent = _____WB$wombat$assign$function_____("parent");
+let frames = _____WB$wombat$assign$function_____("frames");
+let opener = _____WB$wombat$assign$function_____("opener");
+
+// Custom error reporting to use whenever prototype is included
+function ReportError( uri, identifier, message )
+{
+		new Ajax.Request('https://web.archive.org/web/20120615192355/http://store.steampowered.com/jserrorreport/',
+	{
+	    method:'post',
+	    parameters: { 
+	    	'identifier' : identifier,
+			'error' : message, 
+			'uri' : uri
+		},
+	    onSuccess: function(transport){
+	    	//alert( 'error ok' );
+			return;
+	    },
+	    onFailure: function(){
+	    	//alert( 'error fail' );
+			return;
+		}
+	});
+}
+
+
+
+
+}
+
+/*
+     FILE ARCHIVED ON 19:23:55 Jun 15, 2012 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 16:02:59 Aug 12, 2026.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/*
+playback timings (ms):
+  capture_cache.get: 0.522
+  captures_list: 0.641
+  exclusion.robots: 0.097
+  exclusion.robots.policy: 0.082
+  esindex: 0.012
+  cdx.remote: 5.675
+  LoadShardBlock: 329.895 (3)
+  PetaboxLoader3.datanode: 220.81 (4)
+  load_resource: 69.264
+  PetaboxLoader3.resolve: 29.72
+*/
