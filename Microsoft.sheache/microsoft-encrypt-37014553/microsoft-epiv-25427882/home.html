@@ -1,0 +1,2992 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nexus Launcher — GameVault</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js">
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        origin: { bg: '#08080a', card: '#101014', border: 'rgba(255,255,255,0.06)', accent: '#4da6ff' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ── RESET & BASE ── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #bodyMain1 {
+            background: #08080a;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 99px;
+        }
+
+        /* ── LOADER ── */
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #06060a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1), transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #loader.done {
+            opacity: 0;
+            transform: scale(1.04);
+            pointer-events: none;
+        }
+
+        .ld-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(77, 166, 255, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(77, 166, 255, 0.035) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse 55% 55% at 50% 50%, #000 20%, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse 55% 55% at 50% 50%, #000 20%, transparent 70%);
+            animation: ldPulse 5s ease-in-out infinite;
+        }
+        @keyframes ldPulse {
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .ld-scan {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(77, 166, 255, 0.08), transparent);
+            animation: ldScan 4s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes ldScan {
+            0% {
+                top: -1px;
+            }
+            100% {
+                top: 100%;
+            }
+        }
+
+        .ld-ambient {
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(77, 166, 255, 0.07) 0%, transparent 70%);
+            animation: ldAmb 4s ease-in-out infinite;
+        }
+        @keyframes ldAmb {
+            0%,
+            100% {
+                transform: scale(0.85);
+                opacity: 0.4;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .ld-orbit {
+            position: absolute;
+            border: 1px solid rgba(77, 166, 255, 0.06);
+            border-radius: 50%;
+            animation: ldSpin linear infinite;
+        }
+        .ld-orbit-1 {
+            width: 160px;
+            height: 160px;
+            animation-duration: 10s;
+        }
+        .ld-orbit-2 {
+            width: 230px;
+            height: 230px;
+            animation-duration: 14s;
+            animation-direction: reverse;
+            border-color: rgba(77, 166, 255, 0.04);
+        }
+        .ld-orbit-3 {
+            width: 310px;
+            height: 310px;
+            animation-duration: 18s;
+            border-color: rgba(77, 166, 255, 0.03);
+        }
+        @keyframes ldSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .ld-dot {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #4da6ff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(77, 166, 255, 0.7), 0 0 30px rgba(77, 166, 255, 0.2);
+        }
+        .ld-orbit-1 .ld-dot {
+            top: -2.5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .ld-orbit-2 .ld-dot {
+            bottom: -2.5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .ld-orbit-3 .ld-dot {
+            top: 50%;
+            right: -2.5px;
+            transform: translateY(-50%);
+        }
+
+        .ld-logo {
+            position: relative;
+            z-index: 2;
+            width: 80px;
+            height: 80px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #4da6ff, #2563eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(77, 166, 255, 0.35), 0 0 80px rgba(77, 166, 255, 0.15), 0 0 120px rgba(77, 166, 255, 0.05);
+            animation: ldLogoIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both, ldFloat 5s ease-in-out 1.4s infinite;
+        }
+        @keyframes ldLogoIn {
+            from {
+                opacity: 0;
+                transform: scale(0.4) rotate(-12deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0);
+            }
+        }
+        @keyframes ldFloat {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .ld-brand {
+            position: relative;
+            z-index: 2;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-top: 24px;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.65));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: ldTxt 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+        }
+        @keyframes ldTxt {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ld-status {
+            position: relative;
+            z-index: 2;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.2);
+            margin-top: 8px;
+            animation: ldTxt 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s both;
+        }
+        .ld-status .d {
+            display: inline-block;
+            animation: ldDotBlink 1.5s steps(1) infinite;
+        }
+        .ld-status .d:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        .ld-status .d:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        @keyframes ldDotBlink {
+            0%,
+            50% {
+                opacity: 0;
+            }
+            51%,
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .ld-bar-wrap {
+            position: relative;
+            z-index: 2;
+            width: 240px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 99px;
+            margin-top: 28px;
+            overflow: hidden;
+            animation: ldTxt 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+        }
+        .ld-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #4da6ff, #78c8ff, #4da6ff);
+            background-size: 200% 100%;
+            box-shadow: 0 0 16px rgba(77, 166, 255, 0.5), 0 0 40px rgba(77, 166, 255, 0.15);
+            animation: ldShimmer 1.8s linear infinite;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes ldShimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .ld-pct {
+            position: relative;
+            z-index: 2;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(77, 166, 255, 0.4);
+            margin-top: 10px;
+            font-variant-numeric: tabular-nums;
+            animation: ldTxt 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.9s both;
+        }
+
+        .ld-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(77, 166, 255, 0.3);
+            border-radius: 50%;
+            animation: ldPart linear infinite;
+        }
+        @keyframes ldPart {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) translateX(40px);
+                opacity: 0;
+            }
+        }
+
+        .ld-corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            animation: ldTxt 1s ease 1s both;
+        }
+        .ld-corner::before,
+        .ld-corner::after {
+            content: '';
+            position: absolute;
+            background: rgba(77, 166, 255, 0.1);
+        }
+        .ld-ctl {
+            top: 28px;
+            left: 28px;
+        }
+        .ld-ctl::before {
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 1px;
+        }
+        .ld-ctl::after {
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 20px;
+        }
+        .ld-ctr {
+            top: 28px;
+            right: 28px;
+        }
+        .ld-ctr::before {
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 1px;
+        }
+        .ld-ctr::after {
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 20px;
+        }
+        .ld-cbl {
+            bottom: 28px;
+            left: 28px;
+        }
+        .ld-cbl::before {
+            bottom: 0;
+            left: 0;
+            width: 20px;
+            height: 1px;
+        }
+        .ld-cbl::after {
+            bottom: 0;
+            left: 0;
+            width: 1px;
+            height: 20px;
+        }
+        .ld-cbr {
+            bottom: 28px;
+            right: 28px;
+        }
+        .ld-cbr::before {
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 1px;
+        }
+        .ld-cbr::after {
+            bottom: 0;
+            right: 0;
+            width: 1px;
+            height: 20px;
+        }
+
+        .ld-ver {
+            position: absolute;
+            bottom: 30px;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.06);
+            animation: ldTxt 0.8s ease 1.2s both;
+        }
+
+        /* ── RAIL ── */
+        .rail {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            z-index: 50;
+            width: 64px;
+            background: radial-gradient(ellipse at 50% 0%, rgba(77, 166, 255, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(77, 166, 255, 0.03) 0%, transparent 40%),
+                #0c0c10;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .rail::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -1px;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(77, 166, 255, 0.05) 15%, rgba(77, 166, 255, 0.35) 30%, rgba(120, 200, 255, 0.5) 50%, rgba(77, 166, 255, 0.35) 70%, rgba(77, 166, 255, 0.05) 85%, rgba(255, 255, 255, 0));
+            animation: rBeam 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes rBeam {
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .rail .c-tl,
+        .rail .c-bl {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            z-index: 3;
+        }
+        .rail .c-tl {
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at 0% 0%, rgba(77, 166, 255, 0.08) 0%, transparent 70%);
+        }
+        .rail .c-bl {
+            bottom: 0;
+            left: 0;
+            background: radial-gradient(circle at 0% 100%, rgba(77, 166, 255, 0.06) 0%, transparent 70%);
+        }
+
+        .rb {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .rb::after {
+            content: '';
+            position: absolute;
+            left: -1px;
+            top: 50%;
+            transform: translateY(-50%) scaleY(0);
+            width: 3px;
+            height: 55%;
+            background: linear-gradient(180deg, rgba(77, 166, 255, 0.3), #4da6ff, rgba(77, 166, 255, 0.3));
+            border-radius: 0 3px 3px 0;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 0 10px rgba(77, 166, 255, 0.3);
+        }
+        .rb:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .rb.on {
+            background: rgba(77, 166, 255, 0.08);
+        }
+        .rb.on::after {
+            transform: translateY(-50%) scaleY(1);
+        }
+        .rb.on .ri {
+            color: #4da6ff !important;
+        }
+
+        .rb .halo {
+            position: absolute;
+            inset: -4px;
+            border-radius: 16px;
+            background: radial-gradient(circle, rgba(77, 166, 255, 0.12) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .rb.on .halo {
+            opacity: 1;
+        }
+
+        .rb .ri {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            transition: color 0.15s;
+        }
+
+        .rb .tp {
+            position: absolute;
+            left: calc(100% + 14px);
+            top: 50%;
+            transform: translateY(-50%) translateX(-6px);
+            background: linear-gradient(135deg, #24242c, #1c1c24);
+            font-size: 11px;
+            font-weight: 500;
+            padding: 5px 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 60;
+        }
+        .rb .tp::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%) rotate(45deg);
+            width: 10px;
+            height: 10px;
+            background: #24242c;
+            border-left: 1px solid rgba(255, 255, 255, 0.06);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .rb:hover .tp {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        /* ── PANEL ── */
+        .panel {
+            position: fixed;
+            top: 0;
+            left: 64px;
+            height: 100%;
+            z-index: 40;
+            width: 250px;
+            background: radial-gradient(ellipse at 0% 20%, rgba(77, 166, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 0% 80%, rgba(77, 166, 255, 0.02) 0%, transparent 40%),
+                #101014;
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s;
+            overflow: hidden;
+        }
+        .panel.shut {
+            width: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -1px;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, rgba(77, 166, 255, 0), rgba(77, 166, 255, 0.12) 20%, rgba(100, 180, 255, 0.25) 45%, rgba(77, 166, 255, 0.35) 55%, rgba(100, 180, 255, 0.25) 75%, rgba(77, 166, 255, 0.12) 90%, rgba(77, 166, 255, 0));
+            animation: pEdge 5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+        @keyframes pEdge {
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        .panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 24px;
+            background: linear-gradient(90deg, rgba(77, 166, 255, 0.04), transparent);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .panel .beam {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            overflow: visible;
+            pointer-events: none;
+            z-index: 3;
+        }
+        .panel .beam-t {
+            top: 0;
+        }
+        .panel .beam-b {
+            bottom: 0;
+        }
+        .panel .beam::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            width: 80px;
+            height: 3px;
+            border-radius: 99px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(77, 166, 255, 0.5), rgba(120, 200, 255, 0.8), rgba(77, 166, 255, 0.5), rgba(255, 255, 255, 0));
+            box-shadow: 0 0 16px rgba(77, 166, 255, 0.4), 0 0 40px rgba(77, 166, 255, 0.15);
+        }
+        .panel .beam-t::before {
+            animation: bSlideT 9s linear infinite;
+        }
+        .panel .beam-b::before {
+            animation: bSlideB 11s linear infinite;
+        }
+        @keyframes bSlideT {
+            0% {
+                left: -80px;
+            }
+            100% {
+                left: calc(100% + 80px);
+            }
+        }
+        @keyframes bSlideB {
+            0% {
+                left: calc(100% + 80px);
+            }
+            100% {
+                left: -80px;
+            }
+        }
+
+        .mi {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+        }
+        .mi:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .mi.on {
+            background: linear-gradient(90deg, rgba(77, 166, 255, 0.08) 0%, rgba(77, 166, 255, 0.02) 50%, transparent 100%);
+        }
+        .mi.on::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: linear-gradient(180deg, rgba(77, 166, 255, 0.3), rgba(77, 166, 255, 0.8), rgba(77, 166, 255, 0.3));
+            border-radius: 0 2px 2px 0;
+            box-shadow: 0 0 10px rgba(77, 166, 255, 0.4), 0 0 25px rgba(77, 166, 255, 0.12);
+        }
+        .mi .mi-icon {
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.3);
+            transition: color 0.15s;
+            flex-shrink: 0;
+        }
+        .mi.on .mi-icon {
+            color: #4da6ff;
+        }
+        .mi .mi-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.45);
+            transition: color 0.15s;
+        }
+        .mi.on .mi-label {
+            color: #fff;
+        }
+        .mi .mi-badge {
+            margin-left: auto;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 99px;
+            background: rgba(77, 166, 255, 0.12);
+            color: #4da6ff;
+            box-shadow: 0 0 10px rgba(77, 166, 255, 0.08);
+        }
+        .mi .mi-sep {
+            position: absolute;
+            bottom: 0;
+            left: 16px;
+            right: 16px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .mi .mi-arr {
+            margin-left: auto;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.12);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .mi:hover .mi-arr {
+            opacity: 1;
+        }
+
+        /* ── IFRAME ── */
+        .iframe-wrap {
+            flex: 1;
+            margin-left: 64px;
+            position: relative;
+            transition: margin-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .iframe-wrap.shifted {
+            margin-left: 314px;
+        }
+        .iframe-wrap iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #0e0e10;
+        }
+        .iframe-loading {
+            position: absolute;
+            inset: 0;
+            background: #08080a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: opacity 0.35s;
+        }
+        .iframe-loading.gone {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .iframe-loading .spin {
+            width: 34px;
+            height: 34px;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            border-top-color: #4da6ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            box-shadow: 0 0 16px rgba(77, 166, 255, 0.15);
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .iframe-loading span {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.2);
+            margin-top: 14px;
+        }
+
+        /* ── MOBILE ── */
+        .mob-btn {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 30;
+            width: 44px;
+            height: 44px;
+            background: #0c0c10;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 16px rgba(77, 166, 255, 0.05);
+        }
+        .mob-btn .ri {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .mob-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            z-index: 40;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s;
+        }
+        .mob-overlay.vis {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @media (max-width: 1023px) {
+            .mob-btn {
+                display: flex;
+            }
+            .rail {
+                transform: translateX(-100%);
+            }
+            .rail.open {
+                transform: translateX(0);
+            }
+            .panel {
+                transform: translateX(-100%);
+                left: 64px;
+            }
+            .panel.open {
+                transform: translateX(0);
+            }
+            .iframe-wrap {
+                margin-left: 0 !important;
+            }
+        }
+
+        /* ── TOAST ── */
+        #toasts {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast-in {
+            animation: tIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .toast-out {
+            animation: tOut 0.25s ease forwards;
+        }
+        @keyframes tIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.94);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes tOut {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.94);
+            }
+        }
+
+        /* ── NEON LOGO ── */
+        .neon-border-img {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+            overflow: hidden;
+            border: 1.5px solid #a855f7;
+            box-shadow: 0 0 6px #a855f7, 0 0 18px #8b5cf6, 0 0 35px rgba(77, 166, 255, 0.3), inset 0 0 6px #a855f7, inset 0 0 12px rgba(77, 166, 255, 0.3);
+            animation: neonPulse 2.6s infinite alternate ease-in-out;
+            transition: transform 0.2s;
+        }
+        .neon-border-img:hover {
+            transform: scale(1.05);
+        }
+        .neon-border-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        @keyframes neonPulse {
+            0% {
+                border-color: #a855f7;
+                box-shadow: 0 0 6px #a855f7, 0 0 18px #8b5cf6, 0 0 35px rgba(77, 166, 255, 0.3), inset 0 0 6px #a855f7, inset 0 0 12px rgba(77, 166, 255, 0.3);
+            }
+            100% {
+                border-color: #4da6ff;
+                box-shadow: 0 0 12px #4da6ff, 0 0 30px #8b5cf6, 0 0 55px #a855f7, inset 0 0 12px #4da6ff, inset 0 0 24px rgba(139, 92, 246, 0.4);
+            }
+        }
+
+        /* ── STORE CARDS ── */
+        .store-card {
+            background: #101014;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            position: relative;
+        }
+        .store-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            border-color: rgba(77, 166, 255, 0.15);
+            box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(77, 166, 255, 0.05) inset;
+        }
+        .store-card .cover {
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+        }
+        .store-card .cover .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.5) 0%, transparent 60%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .store-card:hover .cover .overlay {
+            opacity: 1;
+        }
+        .store-card .cover .overlay button {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 6px 18px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .store-card .cover .overlay button:hover {
+            background: rgba(77, 166, 255, 0.25);
+            border-color: rgba(77, 166, 255, 0.3);
+            box-shadow: 0 0 20px rgba(77, 166, 255, 0.15);
+        }
+        .store-card .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 8px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+        }
+        .store-card .info {
+            padding: 14px 16px 16px;
+        }
+        .store-card .info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        .store-card .info .price {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            margin-top: 2px;
+        }
+        .store-card .info .price .sale {
+            color: #4ade80;
+            font-weight: 600;
+        }
+        .store-card .info .price .original {
+            text-decoration: line-through;
+            margin-right: 6px;
+            opacity: 0.4;
+        }
+
+        /* ── MAIN AREA ── */
+        .main-area {
+            flex: 1;
+            min-height: 100vh;
+            overflow-y: auto;
+            margin-left: 64px;
+            background: #08080a;
+            transition: margin-left 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .main-area.shifted {
+            margin-left: 314px;
+        }
+
+        .cview {
+            animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── HERO ── */
+        .hero-glow {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .hero-glow:hover {
+            transform: scale(1.005);
+            box-shadow: 0 0 40px rgba(77, 166, 255, 0.06);
+        }
+        .hero-glow .grad {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, transparent 60%, rgba(0, 0, 0, 0.2) 100%);
+        }
+        .hero-glow .content {
+            position: relative;
+            z-index: 2;
+            padding: 32px 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+            min-height: 220px;
+        }
+        .hero-glow .content .tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .hero-glow .content .tags span {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 3px 12px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+        }
+        .hero-glow .content h2 {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .hero-glow .content p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 4px;
+            max-width: 480px;
+            line-height: 1.5;
+        }
+        .hero-glow .content .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+        .hero-glow .content .actions .btn-primary {
+            padding: 8px 22px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4da6ff, #2563eb);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 20px rgba(77, 166, 255, 0.2);
+        }
+        .hero-glow .content .actions .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(77, 166, 255, 0.3);
+        }
+        .hero-glow .content .actions .btn-secondary {
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .hero-glow .content .actions .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            .hero-glow .content {
+                padding: 20px;
+                min-height: 160px;
+            }
+            .hero-glow .content h2 {
+                font-size: 20px;
+            }
+            .hero-glow .content p {
+                font-size: 12px;
+            }
+        }
+
+        /* ── GAME GRID ── */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        @media (max-width: 480px) {
+            .game-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        /* ── SECTION HEADER ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .section-header h3 {
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        .section-header a {
+            font-size: 11.5px;
+            color: rgba(255, 255, 255, 0.2);
+            transition: color 0.2s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .section-header a:hover {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ── MISC ── */
+        .hidden {
+            display: none !important;
+        }
+
+        .pscroll {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.06) transparent;
+        }
+        .pscroll::-webkit-scrollbar {
+            width: 3px;
+        }
+        .pscroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .pscroll::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 99px;
+        }
+
+        /* ── LIBRARY EMPTY STATE ── */
+        .lib-empty {
+            text-align: center;
+            padding: 50px 20px;
+            grid-column: 1/-1;
+            background: #101014;
+            border-radius: 16px;
+            border: 1px dashed rgba(77, 166, 255, 0.12);
+        }
+        .lib-empty i {
+            font-size: 40px;
+            color: #4da6ff;
+            opacity: 0.2;
+            margin-bottom: 12px;
+        }
+        .lib-empty h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .lib-empty p {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
+        }
+        .lib-empty .highlight {
+            color: #4da6ff;
+            cursor: pointer;
+        }
+        .lib-empty .highlight:hover {
+            text-decoration: underline;
+        }
+
+        /* ── DOWNLOAD MANAGER SPECIFICS ── */
+        .dl-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .dl-stat-card {
+            background: #101014;
+            border-radius: 12px;
+            padding: 14px 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .dl-stat-card .value {
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .dl-stat-card .label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .dl-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        .dl-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .dl-btn:hover {
+            background: rgba(77, 166, 255, 0.08);
+            color: #fff;
+            border-color: rgba(77, 166, 255, 0.15);
+        }
+        .dl-btn.active {
+            background: rgba(77, 166, 255, 0.12);
+            color: #4da6ff;
+            border-color: rgba(77, 166, 255, 0.2);
+        }
+
+        .dl-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            max-height: 50vh;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .dl-grid::-webkit-scrollbar {
+            width: 3px;
+        }
+        .dl-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 99px;
+        }
+
+        .dl-item {
+            background: #101014;
+            border-radius: 12px;
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .dl-item:hover {
+            border-color: rgba(77, 166, 255, 0.08);
+        }
+        .dl-item .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dl-item .top .name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .dl-item .top .status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 6px;
+        }
+        .status-downloading {
+            background: rgba(77, 166, 255, 0.12);
+            color: #4da6ff;
+        }
+        .status-paused {
+            background: rgba(251, 191, 36, 0.12);
+            color: #fbbf24;
+        }
+        .status-completed {
+            background: rgba(74, 222, 128, 0.12);
+            color: #4ade80;
+        }
+        .status-seeding {
+            background: rgba(168, 85, 247, 0.12);
+            color: #a855f7;
+        }
+
+        .dl-item .progress {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .dl-item .progress .fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.3s;
+        }
+        .fill-dl {
+            background: linear-gradient(90deg, #4da6ff, #78c8ff);
+        }
+        .fill-done {
+            background: #4ade80;
+        }
+        .fill-paused {
+            background: #fbbf24;
+        }
+
+        .dl-item .meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .dl-item .actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .dl-item .actions button {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .dl-item .actions .pause-btn {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+        }
+        .dl-item .actions .pause-btn:hover {
+            background: rgba(251, 191, 36, 0.2);
+        }
+        .dl-item .actions .resume-btn {
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+        }
+        .dl-item .actions .resume-btn:hover {
+            background: rgba(74, 222, 128, 0.2);
+        }
+        .dl-item .actions .remove-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+        }
+        .dl-item .actions .remove-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .add-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .add-row input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+        }
+        .add-row input:focus {
+            outline: none;
+            border-color: rgba(77, 166, 255, 0.2);
+        }
+        .add-row input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+        .add-row .product-hint {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.15);
+            padding: 4px 0;
+        }
+
+        /* ── TOAST OVERRIDE ── */
+        .toast-dw_container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+        .toast {
+            padding: 14px 22px;
+            background: #1c1c24;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+            animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(16px);
+            border-left: 3px solid #4ade80;
+            pointer-events: auto;
+        }
+        .toast--removing {
+            animation: toastOut 0.3s ease forwards;
+        }
+        .toast__icon {
+            color: #4ade80;
+        }
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes toastOut {
+            to {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+        }
+
+        /* ── CONFIRM POPUP ── */
+        .confirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .confirm-dialog {
+            background: linear-gradient(135deg, #12121a, #0c0c12);
+            border-radius: 20px;
+            padding: 28px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            animation: slideUp 0.3s ease;
+        }
+        .confirm-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 51, 85, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            color: #ff3355;
+        }
+        .confirm-dialog h3 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+        .confirm-dialog p {
+            color: #8888a0;
+            font-size: 0.85rem;
+            margin-bottom: 24px;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .confirm-cancel,
+        .confirm-remove {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .confirm-cancel {
+            background: rgba(255, 255, 255, 0.08);
+            color: #8888a0;
+        }
+        .confirm-cancel:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        .confirm-remove {
+            background: #ff3355;
+            color: white;
+        }
+        .confirm-remove:hover {
+            background: #ff1133;
+            transform: translateY(-2px);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            grid-column: 1/-1;
+        }
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(0, 112, 255, 0.2);
+            border-top-color: #0070ff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .loading p {
+            color: #55556a;
+            font-size: 13px;
+        }
+
+        /* ── PRODUCT KEY CONTAINER ── */
+        #productKeyContainer {
+            display: none;
+        }
+    </style>
+
+</head>
+
+<body id="bodyMain1">
+
+    <!-- ===== LOADING SCREEN ===== -->
+    <div id="loader">
+        <div class="ld-grid"></div>
+        <div class="ld-scan"></div>
+        <div class="ld-ambient"></div>
+        <div class="ld-orbit ld-orbit-1"><div class="ld-dot"></div></div>
+        <div class="ld-orbit ld-orbit-2"><div class="ld-dot"></div></div>
+        <div class="ld-orbit ld-orbit-3"><div class="ld-dot"></div></div>
+        <div class="ld-corner ld-ctl"></div>
+        <div class="ld-corner ld-ctr"></div>
+        <div class="ld-corner ld-cbl"></div>
+        <div class="ld-corner ld-cbr"></div>
+        <div class="ld-particle" style="left:16%;bottom:26%;animation-duration:3.2s"></div>
+        <div class="ld-particle" style="left:34%;bottom:16%;animation-duration:4.4s;animation-delay:0.5s"></div>
+        <div class="ld-particle" style="left:54%;bottom:30%;animation-duration:3.8s;animation-delay:1s;width:1px;height:1px;opacity:0.25"></div>
+        <div class="ld-particle" style="left:70%;bottom:20%;animation-duration:5s;animation-delay:1.6s"></div>
+        <div class="ld-particle" style="left:84%;bottom:36%;animation-duration:3.5s;animation-delay:0.7s;width:1px;height:1px;opacity:0.25"></div>
+        <div class="ld-particle" style="left:46%;bottom:40%;animation-duration:5.2s;animation-delay:2.2s"></div>
+        <div class="ld-logo"><span class="iconify" data-icon="solar:gamepad-bold" style="font-size:36px;color:#fff;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));"></span></div>
+        <div class="ld-brand">Nexus Launcher</div>
+        <div class="ld-status" id="ldStatus">Initializing<span class="d">.</span><span class="d">.</span><span class="d">.</span></div>
+        <div class="ld-bar-wrap"><div class="ld-bar" id="ldBar"></div></div>
+        <div class="ld-pct" id="ldPct">0%</div>
+        <div class="ld-ver">v2.0.0</div>
+    </div>
+
+    <!-- ===== MOBILE BTN ===== -->
+    <div class="mob-btn" onclick="mobOpen()"><span class="iconify ri" data-icon="solar:hamburger-menu-line-duotone"></span></div>
+    <div class="mob-overlay" id="mobOv" onclick="mobClose()"></div>
+
+    <!-- ===== RAIL ===== -->
+    <nav class="rail" id="rail">
+        <div class="c-tl"></div>
+        <div class="c-bl"></div>
+
+        <!-- Logo -->
+        <div style="display:flex;align-items:center;justify-content:center;height:65px;flex-shrink:0">
+            <div class="neon-border-img" onclick="togglePanel()">
+                <img src="https://developerhost-server.github.io/JyubyubySbiu6ininu/Microsoft.sheache/microsoft-encrypt-37014553/microsoft-epiv-25427882/my/logo.ico" alt="Logo" style="width:34px;height:34px;object-fit:contain;">
+            </div>
+        </div>
+
+        <!-- Nav Icons -->
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding-top:8px">
+            <div class="rb on" data-panel="home" onclick="navTo(this,'home')">
+                <div class="halo"></div>
+                <span class="iconify ri" data-icon="solar:home-smile-bold-duotone"></span>
+                <span class="tp">Home</span>
+            </div>
+            <div class="rb" data-panel="store" onclick="navTo(this,'store')">
+                <div class="halo"></div>
+                <span class="iconify ri" data-icon="solar:bag-heart-bold-duotone"></span>
+                <span class="tp">Store</span>
+            </div>
+            <div class="rb" data-panel="library" onclick="navTo(this,'library')">
+                <div class="halo"></div>
+                <span class="iconify ri" data-icon="solar:library-bold-duotone"></span>
+                <span class="tp">Library</span>
+                <span id="libBadgeRail" style="position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,0.5);border:2px solid #0c0c10;display:none;"></span>
+            </div>
+            <div class="rb" data-panel="downloads" onclick="navTo(this,'downloads')">
+                <div class="halo"></div>
+                <span class="iconify ri" data-icon="solar:download-minimalistic-bold-duotone"></span>
+                <span class="tp">Downloads</span>
+                <span style="position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:#4da6ff;box-shadow:0 0 8px rgba(77,166,255,0.5);border:2px solid #0c0c10;"></span>
+            </div>
+        </div>
+
+        <!-- Bottom -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding-bottom:12px">
+            <div style="width:28px;height:1px;background:rgba(255,255,255,0.05);margin-bottom:6px"></div>
+            <div class="rb" onclick="showToast('Settings coming soon')">
+                <div class="halo"></div>
+                <span class="iconify ri" data-icon="solar:settings-bold-duotone"></span>
+                <span class="tp">Settings</span>
+            </div>
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ef4444,#ec4899);cursor:pointer;box-shadow:0 0 14px rgba(239,68,68,0.15);margin-top:4px;transition:transform 0.2s;" onclick="showToast('Profile')" onmouseenter="this.style.transform='scale(1.05)'" onmouseleave="this.style.transform='scale(1)'"></div>
+        </div>
+    </nav>
+
+    <!-- ===== PANEL ===== -->
+    <div class="panel" id="panel">
+        <div class="beam beam-t"></div>
+        <div class="beam beam-b"></div>
+        <div class="pscroll" style="height:100%;overflow-y:auto;padding:16px 8px;position:relative;z-index:10">
+            <div style="padding:0 8px 6px;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.18)">Navigation</div>
+
+            <a class="mi on" data-key="home" href="https://developerhost-server.github.io/JyubyubySbiu6ininu/Microsoft.sheache/microsoft-encrypt-37014553/microsoft-epiv-25427882" target="contentFrame" onclick="activate(this,'home')">
+                <span class="iconify mi-icon" data-icon="solar:home-smile-bold-duotone"></span>
+                <span class="mi-label">Home</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+
+            <a class="mi" data-key="store" href="#" onclick="activateStore(this);return false;">
+                <span class="iconify mi-icon" data-icon="solar:bag-heart-bold-duotone"></span>
+                <span class="mi-label">Store</span>
+                <span class="mi-badge">New</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+                <span class="mi-sep"></span>
+            </a>
+            <a class="mi" data-key="library" href="#" onclick="activateLibrary(this);return false;">
+                <span class="iconify mi-icon" data-icon="solar:library-bold-duotone"></span>
+                <span class="mi-label">Library</span>
+                <span class="mi-badge" id="libBadgePanel" style="background:rgba(74,222,128,0.15);color:#4ade80;display:none;">0</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+            <a class="mi" data-key="downloads" href="#" onclick="activateDownloads(this);return false;">
+                <span class="iconify mi-icon" data-icon="solar:download-minimalistic-bold-duotone"></span>
+                <span class="mi-label">Downloads</span>
+                <span class="mi-badge" style="background:rgba(77,166,255,0.2);">1</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+
+            <div style="height:1px;background:rgba(255,255,255,0.04);margin:12px 16px"></div>
+
+            <div style="padding:0 8px 6px;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.18)">Quick Links</div>
+            <a class="mi" href="https://store.steampowered.com" target="_blank" onclick="activateQuick(this)">
+                <span class="iconify mi-icon" data-icon="simple-icons:steam" style="font-size:16px"></span>
+                <span class="mi-label">Steam Store</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+            <a class="mi" href="https://www.epicgames.com/store" target="_blank" onclick="activateQuick(this)">
+                <span class="iconify mi-icon" data-icon="simple-icons:epicgames" style="font-size:16px"></span>
+                <span class="mi-label">Epic Games</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+            <a class="mi" href="https://www.gog.com" target="_blank" onclick="activateQuick(this)">
+                <span class="iconify mi-icon" data-icon="simple-icons:gog" style="font-size:16px"></span>
+                <span class="mi-label">GOG</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+            <a class="mi" href="https://www.origin.com" target="_blank" onclick="activateQuick(this)">
+                <span class="iconify mi-icon" data-icon="simple-icons:ea" style="font-size:16px"></span>
+                <span class="mi-label">EA / Origin</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+
+            <div style="height:1px;background:rgba(255,255,255,0.04);margin:12px 16px"></div>
+
+            <div style="padding:0 8px 6px;font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.18)">Tools</div>
+            <a class="mi" href="https://discord.com/app" target="_blank" onclick="activateQuick(this)">
+                <span class="iconify mi-icon" data-icon="simple-icons:discord" style="font-size:16px"></span>
+                <span class="mi-label">Discord</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+            <a class="mi" href="https://web.whatsapp.com" target="_blank" onclick="activateQuick(this)">
+                <span class="iconify mi-icon" data-icon="simple-icons:whatsapp" style="font-size:16px"></span>
+                <span class="mi-label">WhatsApp</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+            <a class="mi" href="https://spotify.com" target="_blank" onclick="activateQuick(this)">
+                <span class="iconify mi-icon" data-icon="simple-icons:spotify" style="font-size:16px"></span>
+                <span class="mi-label">Spotify</span>
+                <span class="iconify mi-arr" data-icon="solar:arrow-right-up-line-duotone"></span>
+            </a>
+            <div style="height:24px"></div>
+        </div>
+    </div>
+
+    <!-- ===== IFRAME ===== -->
+    <div class="iframe-wrap shifted" id="iwrap">
+        <iframe id="frame" name="contentFrame" src="https://developerhost-server.github.io/JyubyubySbiu6ininu/Microsoft.sheache/microsoft-encrypt-37014553/microsoft-epiv-25427882/my/Store.html" allow="fullscreen"></iframe>
+        <div class="iframe-loading" id="ifLoad">
+            <div class="spin"></div>
+            <span>Loading...</span>
+        </div>
+    </div>
+
+    <!-- ===== MAIN AREA ===== -->
+    <main class="main-area shifted" id="mainArea">
+        <div class="p-6 lg:p-8" id="mainContent">
+
+            <!-- ─── HOME ─── -->
+            <div id="c-home" class="cview">
+                <!-- Hero -->
+                <div class="hero-glow mb-8" style="background:linear-gradient(135deg,#0b2035,#122d4a,#081525);min-height:220px;">
+                    <div class="grad"></div>
+                    <div class="content">
+                        <div class="tags">
+                            <span style="background:rgba(77,166,255,0.15);color:#4da6ff;border:1px solid rgba(77,166,255,0.1);">Featured</span>
+                            <span style="background:rgba(52,211,153,0.1);color:#4ade80;border:1px solid rgba(52,211,153,0.1);">Available Now</span>
+                        </div>
+                        <h2>EA Sports FC 25</h2>
+                        <p>The new era of football. Next-gen Frostbite gameplay, HyperMotion V, and stunning visual fidelity.</p>
+                        <div class="actions">
+                            <button class="btn-primary" onclick="showToast('Launching EA Sports FC 25...')">
+                                <span class="iconify" data-icon="solar:play-bold"></span> Play Now
+                            </button>
+                            <button class="btn-secondary" onclick="showToast('Opening details...')">Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Continue Playing -->
+                <div class="section-header">
+                    <h3>Continue Playing</h3>
+                    <a onclick="showToast('View all games')">View All →</a>
+                </div>
+                <div class="game-grid mb-8">
+                    <div class="store-card" onclick="showToast('Launching FIFA 24...')">
+                        <div class="cover" style="background:linear-gradient(135deg,#3b82f6,#06b6d4);">
+                            <div class="overlay"><button>▶ Play</button></div>
+                            <div style="position:absolute;bottom:10px;right:12px;font-size:9px;color:rgba(255,255,255,0.2);">42.1 GB</div>
+                        </div>
+                        <div class="info">
+                            <h4>FIFA 24</h4>
+                            <div class="price" style="font-size:10px;color:rgba(255,255,255,0.15);">Last played 2h ago</div>
+                        </div>
+                    </div>
+                    <div class="store-card" onclick="showToast('Launching Battlefield 2042...')">
+                        <div class="cover" style="background:linear-gradient(135deg,#dc2626,#ea580c);">
+                            <div class="overlay"><button>▶ Play</button></div>
+                            <div style="position:absolute;bottom:10px;right:12px;font-size:9px;color:rgba(255,255,255,0.2);">58.3 GB</div>
+                        </div>
+                        <div class="info">
+                            <h4>Battlefield 2042</h4>
+                            <div class="price" style="font-size:10px;color:rgba(255,255,255,0.15);">Last played yesterday</div>
+                        </div>
+                    </div>
+                    <div class="store-card" onclick="showToast('Updating Apex Legends...')">
+                        <div class="cover" style="background:linear-gradient(135deg,#10b981,#14b8a6);">
+                            <div class="overlay"><button>⟳ Update</button></div>
+                            <div style="position:absolute;bottom:10px;left:12px;font-size:9px;color:rgba(255,255,255,0.4);background:rgba(0,0,0,0.4);padding:2px 10px;border-radius:4px;">32%</div>
+                            <div style="position:absolute;bottom:6px;left:12px;right:12px;height:2px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;">
+                                <div style="width:32%;height:100%;background:#4da6ff;border-radius:99px;box-shadow:0 0 10px rgba(77,166,255,0.3);"></div>
+                            </div>
+                            <div style="position:absolute;bottom:10px;right:12px;font-size:9px;color:rgba(255,255,255,0.2);">38.2 GB</div>
+                        </div>
+                        <div class="info">
+                            <h4>Apex Legends</h4>
+                            <div class="price" style="font-size:10px;color:rgba(255,255,255,0.15);">Updating — 12.4 / 38.2 GB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended -->
+                <div class="section-header">
+                    <h3>Recommended for You</h3>
+                    <a onclick="showToast('Browse store')">Browse Store →</a>
+                </div>
+                <div class="game-grid">
+                    <div class="store-card" onclick="showToast('Opening Dragon Age...')">
+                        <div class="cover" style="background:linear-gradient(135deg,#2a1540,#0d0718);">
+                            <div class="overlay"><button>View</button></div>
+                            <span class="badge" style="background:rgba(77,166,255,0.12);color:#4da6ff;">RPG</span>
+                        </div>
+                        <div class="info"><h4>Dragon Age: Veilguard</h4><div class="price">$59.99</div></div>
+                    </div>
+                    <div class="store-card" onclick="showToast('Opening F1 23...')">
+                        <div class="cover" style="background:linear-gradient(135deg,#3c1a0d,#1a0d05);">
+                            <div class="overlay"><button>View</button></div>
+                            <span class="badge" style="background:rgba(52,211,153,0.1);color:#4ade80;">Free</span>
+                        </div>
+                        <div class="info"><h4>F1 23</h4><div class="price"><span class="sale">Free with EA Play</span></div></div>
+                    </div>
+                    <div class="store-card" onclick="showToast('Opening Mass Effect...')">
+                        <div class="cover" style="background:linear-gradient(135deg,#0d2035,#051525);">
+                            <div class="overlay"><button>View</button></div>
+                            <span class="badge" style="background:rgba(77,166,255,0.12);color:#4da6ff;">Legendary</span>
+                        </div>
+                        <div class="info"><h4>Mass Effect Legendary</h4><div class="price">$49.99</div></div>
+                    </div>
+                    <div class="store-card" onclick="showToast('Opening Madden...')">
+                        <div class="cover" style="background:linear-gradient(135deg,#1a2040,#0d1025);">
+                            <div class="overlay"><button>View</button></div>
+                            <span class="badge" style="background:rgba(77,166,255,0.12);color:#4da6ff;">Sports</span>
+                        </div>
+                        <div class="info"><h4>Madden NFL 24</h4><div class="price">$59.99</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ─── STORE ─── -->
+            <div id="c-store" class="cview hidden">
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+                    <div>
+                        <h2 class="text-[22px] font-bold tracking-tight">Store</h2>
+                        <p class="text-[13px] text-white/25">Discover your next favorite game</p>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <button class="text-[11px] px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/40 hover:bg-white/[0.08] hover:text-white/70 transition-all" onclick="filterStore('all')">All</button>
+                        <button class="text-[11px] px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/40 hover:bg-white/[0.08] hover:text-white/70 transition-all" onclick="filterStore('action')">Action</button>
+                        <button class="text-[11px] px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/40 hover:bg-white/[0.08] hover:text-white/70 transition-all" onclick="filterStore('rpg')">RPG</button>
+                        <button class="text-[11px] px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/40 hover:bg-white/[0.08] hover:text-white/70 transition-all" onclick="filterStore('sports')">Sports</button>
+                    </div>
+                </div>
+                <div id="storeGrid" class="game-grid"></div>
+            </div>
+
+            <!-- ─── LIBRARY ─── -->
+            <div id="c-library" class="cview hidden">
+                <h2 class="text-[22px] font-bold tracking-tight mb-1">Game Library</h2>
+                <p class="text-[13px] text-white/25 mb-6">Your completed downloads — ready to play</p>
+                <div id="libraryGrid" class="game-grid"></div>
+            </div>
+
+            <!-- ─── DOWNLOADS ─── -->
+            <div id="c-downloads" class="cview hidden">
+
+                <!-- Status Card -->
+                <div class="status-card demo" id="statusCard" style="background:#101014;border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.04);border-left:4px solid #4da6ff;">
+                    <div class="status-info" style="display:flex;align-items:center;gap:14px;">
+                        <div class="status-icon demo" style="width:38px;height:38px;border-radius:50%;background:rgba(77,166,255,0.1);color:#4da6ff;display:flex;align-items:center;justify-content:center;font-size:16px;"><i class="fas fa-flask"></i></div>
+                        <div class="status-text">
+                            <h3 id="statusTitle" style="font-size:14px;font-weight:700;">Demo Mode Active</h3>
+                            <p id="statusMessage" style="font-size:12px;color:rgba(255,255,255,0.3);">Showing sample downloads — connect to qBittorrent for real</p>
+                        </div>
+                    </div>
+                    <button class="btn btn--primary" style="padding:8px 18px;font-size:0.75rem;border-radius:8px;background:linear-gradient(135deg,#4da6ff,#2563eb);border:none;color:#fff;cursor:pointer;transition:all 0.2s;box-shadow:0 0 20px rgba(77,166,255,0.2);" onclick="reconnect()"><i class="fas fa-sync-alt"></i> Connect</button>
+                </div>
+
+                <!-- Add Game (Product Key input) -->
+                <div id="productKeyContainer">
+                    <div class="add-row">
+                        <input type="text" id="magnetInput" placeholder="Enter game product key or magnet link ..." />
+                        <button class="btn btn--primary" id="addBtn" onclick="addTorrent()" style="padding:10px 22px;border-radius:10px;font-size:13px;font-weight:700;background:linear-gradient(135deg,#4da6ff,#2563eb);border:none;color:#fff;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;box-shadow:0 0 20px rgba(77,166,255,0.2);"><i class="fas fa-download"></i> Download</button>
+                    </div>
+                    <div class="product-hint" style="font-size:11px;color:rgba(255,255,255,0.15);margin-bottom:12px;">
+                        <i class="fas fa-info-circle"></i> Available products:
+                        <span id="productCount"></span> &nbsp;·&nbsp; Type a name and press Download to start
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="dl-stats-grid" id="dlStats">
+                    <div class="dl-stat-card"><div class="value" id="dlSpeed">0</div><div class="label">Down (KB/s)</div></div>
+                    <div class="dl-stat-card"><div class="value" id="upSpeed">0</div><div class="label">Up (KB/s)</div></div>
+                    <div class="dl-stat-card"><div class="value" id="dlTotal">0</div><div class="label">Downloaded (GB)</div></div>
+                    <div class="dl-stat-card"><div class="value" id="upTotal">0</div><div class="label">Uploaded (GB)</div></div>
+                    <div class="dl-stat-card"><div class="value" id="totalGames">0</div><div class="label">Games</div></div>
+                    <div class="dl-stat-card"><div class="value" id="activeDownloads">0</div><div class="label">Active</div></div>
+                </div>
+
+                <!-- Controls -->
+                <div class="dl-controls">
+                    <button class="dl-btn" onclick="pauseAll()"><i class="fas fa-pause"></i> Pause All</button>
+                    <button class="dl-btn" onclick="resumeAll()"><i class="fas fa-play"></i> Resume All</button>
+                    <button class="dl-btn" onclick="refreshData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                    <div style="flex:1;"></div>
+                    <button class="dl-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
+                    <button class="dl-btn" data-filter="downloading" onclick="setFilter('downloading',this)">Downloading</button>
+                    <button class="dl-btn" data-filter="completed" onclick="setFilter('completed',this)">Completed</button>
+                    <button class="dl-btn" data-filter="paused" onclick="setFilter('paused',this)">Paused</button>
+                    <button class="dl-btn" data-filter="seeding" onclick="setFilter('seeding',this)">Seeding</button>
+                </div>
+
+                <!-- Download List -->
+                <div class="dl-grid" id="dlGrid">
+                    <div class="loading" style="text-align:center;padding:30px;color:rgba(255,255,255,0.2);"><div class="spinner"></div><p>Loading downloads...</p></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ===== TOASTS ===== -->
+    <div id="toasts"></div>
+
+    <script>
+        // ─────────────────────────────────────────────
+        //  LOADER
+        // ─────────────────────────────────────────────
+        (function() {
+            const ldBar = document.getElementById('ldBar'),
+                ldPct = document.getElementById('ldPct'),
+                ldStatus = document.getElementById('ldStatus'),
+                loader = document.getElementById('loader');
+            const steps = [
+                { p: 12, t: 'Initializing' },
+                { p: 28, t: 'Connecting to servers' },
+                { p: 48, t: 'Loading library' },
+                { p: 68, t: 'Checking updates' },
+                { p: 86, t: 'Syncing data' },
+                { p: 100, t: 'Ready' }
+            ];
+            let si = 0;
+
+            function advLoad() {
+                if (si >= steps.length) return;
+                const s = steps[si];
+                ldBar.style.width = s.p + '%';
+                ldPct.textContent = s.p + '%';
+                ldStatus.innerHTML = s.p < 100 ? s.t + '<span class="d">.</span><span class="d">.</span><span class="d">.</span>' : s
+                    .t;
+                if (s.p === 100) { ldStatus.style.color = 'rgba(77,166,255,0.6)';
+                    ldPct.style.color = 'rgba(77,166,255,0.8)'; }
+                si++;
+                const delays = [500, 600, 500, 600, 400];
+                if (si < steps.length) setTimeout(advLoad, delays[si - 1] || 500);
+                else setTimeout(() => { loader.classList.add('done');
+                    setTimeout(() => { loader.style.display = 'none' }, 900) }, 500);
+            }
+            setTimeout(advLoad, 400);
+        })();
+
+        // ─────────────────────────────────────────────
+        //  STATE
+        // ─────────────────────────────────────────────
+        let panelOpen = true,
+            activeKey = 'home';
+
+        // ─────────────────────────────────────────────
+        //  NAVIGATION
+        // ─────────────────────────────────────────────
+        function navTo(el, key) {
+            document.querySelectorAll('.rb[data-panel]').forEach(b => b.classList.remove('on'));
+            el.classList.add('on');
+
+            if (key === 'store') { activateStore(document.querySelector(`.mi[data-key="store"]`)); return; }
+            if (key === 'library') { activateLibrary(document.querySelector(`.mi[data-key="library"]`)); return; }
+            if (key === 'downloads') { activateDownloads(document.querySelector(`.mi[data-key="downloads"]`)); return; }
+            const link = document.querySelector(`.mi[data-key="${key}"]`);
+            if (link) link.click();
+        }
+
+        function activate(el, key) {
+            activeKey = key;
+            document.querySelectorAll('.mi').forEach(m => m.classList.remove('on'));
+            el.classList.add('on');
+            document.querySelectorAll('.rb[data-panel]').forEach(b => b.classList.remove('on'));
+            const rb = document.querySelector(`.rb[data-panel="${key}"]`);
+            if (rb) rb.classList.add('on');
+
+            document.querySelectorAll('.cview').forEach(v => v.classList.add('hidden'));
+            const target = document.getElementById('c-' + key);
+            if (target) target.classList.remove('hidden');
+
+            const iwrap = document.getElementById('iwrap');
+            const mainArea = document.getElementById('mainArea');
+            if (key === 'home') {
+                iwrap.style.display = '';
+                mainArea.style.display = 'none';
+                showIfLoader();
+            } else {
+                iwrap.style.display = 'none';
+                mainArea.style.display = '';
+            }
+
+            if (window.innerWidth < 1024) mobClose();
+        }
+
+        function activateStore(el) {
+            if (el) { document.querySelectorAll('.mi').forEach(m => m.classList.remove('on'));
+                el.classList.add('on'); }
+            document.querySelectorAll('.rb[data-panel]').forEach(b => b.classList.remove('on'));
+            const rb = document.querySelector('.rb[data-panel="store"]');
+            if (rb) rb.classList.add('on');
+            document.querySelectorAll('.cview').forEach(v => v.classList.add('hidden'));
+            document.getElementById('c-store').classList.remove('hidden');
+            document.getElementById('iwrap').style.display = 'none';
+            document.getElementById('mainArea').style.display = '';
+            if (window.innerWidth < 1024) mobClose();
+            renderStore();
+        }
+
+        function activateLibrary(el) {
+            if (el) { document.querySelectorAll('.mi').forEach(m => m.classList.remove('on'));
+                el.classList.add('on'); }
+            document.querySelectorAll('.rb[data-panel]').forEach(b => b.classList.remove('on'));
+            const rb = document.querySelector('.rb[data-panel="library"]');
+            if (rb) rb.classList.add('on');
+            document.querySelectorAll('.cview').forEach(v => v.classList.add('hidden'));
+            document.getElementById('c-library').classList.remove('hidden');
+            document.getElementById('iwrap').style.display = 'none';
+            document.getElementById('mainArea').style.display = '';
+            if (window.innerWidth < 1024) mobClose();
+            renderLibrary();  // calls API
+        }
+
+        function activateDownloads(el) {
+            if (el) { document.querySelectorAll('.mi').forEach(m => m.classList.remove('on'));
+                el.classList.add('on'); }
+            document.querySelectorAll('.rb[data-panel]').forEach(b => b.classList.remove('on'));
+            const rb = document.querySelector('.rb[data-panel="downloads"]');
+            if (rb) rb.classList.add('on');
+            document.querySelectorAll('.cview').forEach(v => v.classList.add('hidden'));
+            document.getElementById('c-downloads').classList.remove('hidden');
+            document.getElementById('iwrap').style.display = 'none';
+            document.getElementById('mainArea').style.display = '';
+            if (window.innerWidth < 1024) mobClose();
+            // Downloads view is self-contained
+        }
+
+        function activateQuick(el) {
+            document.querySelectorAll('.mi').forEach(m => m.classList.remove('on'));
+            el.classList.add('on');
+            document.querySelectorAll('.rb[data-panel]').forEach(b => b.classList.remove('on'));
+            document.getElementById('iwrap').style.display = '';
+            document.getElementById('mainArea').style.display = 'none';
+            showIfLoader();
+            if (window.innerWidth < 1024) mobClose();
+        }
+
+        function togglePanel() {
+            const p = document.getElementById('panel'),
+                w = document.getElementById('iwrap'),
+                m = document.getElementById('mainArea');
+            panelOpen = !panelOpen;
+            if (panelOpen) { p.classList.remove('shut');
+                w.classList.add('shifted');
+                m.classList.add('shifted'); } else { p.classList.add('shut');
+                w.classList.remove('shifted');
+                m.classList.remove('shifted'); }
+        }
+
+        function showIfLoader() {
+            const l = document.getElementById('ifLoad');
+            l.classList.remove('gone');
+            setTimeout(() => l.classList.add('gone'), 1200);
+        }
+        document.getElementById('frame').addEventListener('load', () => {
+            document.getElementById('ifLoad').classList.add('gone');
+        });
+
+        function mobOpen() {
+            document.getElementById('rail').classList.add('open');
+            document.getElementById('panel').classList.add('open');
+            document.getElementById('mobOv').classList.add('vis');
+        }
+
+        function mobClose() {
+            document.getElementById('rail').classList.remove('open');
+            document.getElementById('panel').classList.remove('open');
+            document.getElementById('mobOv').classList.remove('vis');
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') mobClose(); });
+
+        function showToast(msg) {
+            const c = document.getElementById('toasts'),
+                t = document.createElement('div');
+            t.style.cssText =
+                'pointer-events:auto;background:linear-gradient(135deg,#24242c,#1c1c24);border:1px solid rgba(77,166,255,0.08);box-shadow:0 10px 30px rgba(0,0,0,0.5),0 0 1px rgba(77,166,255,0.1);border-radius:12px;padding:10px 18px;display:flex;align-items:center;gap:10px;min-width:180px;';
+            t.className = 'toast-in';
+            t.innerHTML =
+                `<span class="iconify" data-icon="solar:info-circle-bold-duotone" style="font-size:16px;color:#4da6ff;filter:drop-shadow(0 0 6px rgba(77,166,255,0.2));flex-shrink:0"></span><span style="font-size:12px;color:rgba(255,255,255,0.8)">${msg}</span>`;
+            c.appendChild(t);
+            setTimeout(() => { t.className = 'toast-out';
+                setTimeout(() => t.remove(), 280) }, 2600);
+        }
+
+        // ─────────────────────────────────────────────
+        //  STORE (static)
+        // ─────────────────────────────────────────────
+        const storeGames = [
+            { id: 1, name: 'EA Sports FC 25', genre: 'sports', price: '$69.99', badge: 'New', badgeColor: 'rgba(77,166,255,0.12)',
+                badgeText: '#4da6ff', grad: 'from-blue-600 to-cyan-500' },
+            { id: 2, name: 'Dragon Age: Veilguard', genre: 'rpg', price: '$59.99', sale: '$41.99', badge: '-30%',
+                badgeColor: 'rgba(52,211,153,0.1)', badgeText: '#4ade80', grad: 'from-purple-700 to-indigo-800' },
+            { id: 3, name: 'Apex Legends', genre: 'action', price: 'Free', badge: 'Free',
+                badgeColor: 'rgba(52,211,153,0.1)', badgeText: '#4ade80', grad: 'from-emerald-500 to-teal-600' },
+            { id: 4, name: 'Battlefield 2042', genre: 'action', price: '$39.99', badge: 'Action',
+                badgeColor: 'rgba(239,68,68,0.1)', badgeText: '#f87171', grad: 'from-red-600 to-orange-500' },
+            { id: 5, name: 'Mass Effect Legendary', genre: 'rpg', price: '$49.99', badge: 'Legendary',
+                badgeColor: 'rgba(77,166,255,0.12)', badgeText: '#4da6ff', grad: 'from-cyan-600 to-blue-700' },
+            { id: 6, name: 'F1 23', genre: 'sports', price: 'Free with EA Play', badge: 'Free',
+                badgeColor: 'rgba(52,211,153,0.1)', badgeText: '#4ade80', grad: 'from-amber-600 to-red-600' },
+            { id: 7, name: 'Madden NFL 24', genre: 'sports', price: '$59.99', badge: 'Sports',
+                badgeColor: 'rgba(77,166,255,0.12)', badgeText: '#4da6ff', grad: 'from-indigo-600 to-blue-500' },
+            { id: 8, name: 'Star Wars Jedi: Survivor', genre: 'action', price: '$69.99', badge: 'New',
+                badgeColor: 'rgba(77,166,255,0.12)', badgeText: '#4da6ff', grad: 'from-slate-600 to-zinc-700' },
+            { id: 9, name: 'The Sims 4', genre: 'rpg', price: '$39.99', badge: 'Sims',
+                badgeColor: 'rgba(77,166,255,0.12)', badgeText: '#4da6ff', grad: 'from-violet-500 to-fuchsia-600' },
+            { id: 10, name: 'Plants vs. Zombies 3', genre: 'action', price: '$19.99', badge: 'Casual',
+                badgeColor: 'rgba(77,166,255,0.12)', badgeText: '#4da6ff', grad: 'from-lime-500 to-green-600' },
+            { id: 11, name: 'Need for Speed Unbound', genre: 'sports', price: '$45.99', badge: 'Racing',
+                badgeColor: 'rgba(77,166,255,0.12)', badgeText: '#4da6ff', grad: 'from-amber-500 to-yellow-600' },
+            { id: 12, name: 'Command & Conquer Remastered', genre: 'action', price: '$29.99', badge: 'Classic',
+                badgeColor: 'rgba(77,166,255,0.12)', badgeText: '#4da6ff', grad: 'from-yellow-600 to-amber-700' },
+        ];
+        let storeFilter = 'all';
+
+        function filterStore(genre) {
+            storeFilter = genre;
+            renderStore();
+            const btns = document.querySelectorAll('#c-store .rounded-full');
+            btns.forEach(b => { b.style.background = 'rgba(255,255,255,0.04)';
+                b.style.color = 'rgba(255,255,255,0.4)'; });
+            if (event && event.target) { event.target.style.background = 'rgba(255,255,255,0.08)';
+                event.target.style.color = 'rgba(255,255,255,0.7)'; }
+        }
+
+        function renderStore() {
+            const grid = document.getElementById('storeGrid');
+            const filtered = storeFilter === 'all' ? storeGames : storeGames.filter(g => g.genre === storeFilter);
+            grid.innerHTML = filtered.map(g => `
+            <div class="store-card" onclick="showToast('Opening ${g.name}...')">
+              <div class="cover" style="background:linear-gradient(135deg,${g.grad});">
+                <div class="overlay"><button>View</button></div>
+                <span class="badge" style="background:${g.badgeColor};color:${g.badgeText};">${g.badge}</span>
+              </div>
+              <div class="info">
+                <h4>${g.name}</h4>
+                <div class="price">${g.sale ? `<span class="original">${g.price}</span><span class="sale">${g.sale}</span>` : g.price}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        // ─────────────────────────────────────────────
+        //  DOWNLOAD MANAGER + LIBRARY (API-integrated)
+        // ─────────────────────────────────────────────
+
+        // ---- PRODUCT LIST (game name → magnet link) ----
+        const productList_Key = [
+            { product: "Cyber Nexus 2087", magnet: "magnet:?xt=urn:btih:abc123&dn=Cyber+Nexus+2087" },
+            { product: "Shadow Realm: Eclipse", magnet: "magnet:?xt=urn:btih:5e0fb5d079f91918abf0a36389b1448be299f55e&dn=Avatar.The.Legend.of.Aang.The.Last.Airbender.2026.1080p.PMNTP.WEBRip.AAC2.0.H264-%5BLEAK%5D.mp4&xl=3406311653&tr=http%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2F47.ip-51-68-199.eu%3A6969%2Fannounce&tr=udp%3A%2F%2F9.rarbg.me%3A2780%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2710%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2730%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2920%2Fannounce&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce&tr=udp%3A%2F%2Fopentracker.i2p.rocks%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.cyberia.is%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.dler.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337&tr=udp%3A%2F%2Ftracker.pirateparty.gr%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.tiny-vps.com%3A6" },
+            { product: "Velocity Overdrive", magnet: "magnet:?xt=urn:btih:ghi789&dn=Velocity+Overdrive" },
+            { product: "Stellar Warfare", magnet: "magnet:?xt=urn:btih:jkl012&dn=Stellar+Warfare" },
+            { product: "Arcane Legends Online", magnet: "magnet:?xt=urn:btih:mno345&dn=Arcane+Legends+Online" },
+            { product: "Dungeon Core", magnet: "magnet:?xt=urn:btih:pqr678&dn=Dungeon+Core" },
+            { product: "Neon Drift", magnet: "magnet:?xt=urn:btih:stu901&dn=Neon+Drift" },
+            { product: "Phantom Protocol", magnet: "magnet:?xt=urn:btih:vwx234&dn=Phantom+Protocol" },
+            { product: "Titan Siege", magnet: "magnet:?xt=urn:btih:yza567&dn=Titan+Siege" },
+            { product: "Pixel Warriors", magnet: "magnet:?xt=urn:btih:bcd890&dn=Pixel+Warriors" },
+            { product: "Frost Empire", magnet: "magnet:?xt=urn:btih:efg123&dn=Frost+Empire" },
+            { product: "44gho-78st-93of-77tsus-64hima", magnet: "magnet:?xt=urn:btih:hij456&dn=Mecha+Strike+Force", Game_Name:"Ghost of Tsushima" },
+            { product: "893unch-675arted-4-a-456thiefs-893end", magnet: "magnet:?xt=urn:btih:hij456&dn=Mecha+Strike+Force", Game_Name:"UNCHARTED 4: A Thief’s End" },
+        ];
+
+        document.getElementById('productCount').textContent = productList_Key.length;
+
+        // STATE
+        let currentFilter = 'all';
+        let isConnected = false;
+        let gamesData = [];
+        let refreshTimer = null;
+        let demoTickTimer = null;
+
+        // DEMO DATA
+        const demoGames = [
+            { hash: 'd1', name: 'Cyber Nexus 2087', genre: 'RPG', size: 92.4,
+                img: 'https://picsum.photos/seed/cyberpunk-neon-city/800/450.jpg', state: 'downloading', progress: 67,
+                dlSpeed: 14200, upSpeed: 2100, ratio: 0.42, seeds: 847, leechs: 124, downloaded: 61.9, uploaded: 26.0,
+                savePath: 'D:/Games/CyberNexus2087', addedOn: '2025-06-10', eta: '24 min' },
+            { hash: 'd2', name: 'Shadow Realm: Eclipse', genre: 'Action', size: 67.2,
+                img: 'https://picsum.photos/seed/dark-fantasy-sword/800/450.jpg', state: 'downloading', progress: 34,
+                dlSpeed: 8600, upSpeed: 1200, ratio: 0.18, seeds: 523, leechs: 89, downloaded: 22.8, uploaded: 4.1,
+                savePath: 'D:/Games/ShadowRealm', addedOn: '2025-06-11', eta: '1h 12min' },
+            { hash: 'd3', name: 'Velocity Overdrive', genre: 'Racing', size: 45.8,
+                img: 'https://picsum.photos/seed/racing-car-speed/800/450.jpg', state: 'downloading', progress: 100,
+                dlSpeed: 0, upSpeed: 3400, ratio: 2.81, seeds: 12, leechs: 67, downloaded: 45.8, uploaded: 128.7,
+                savePath: 'D:/Games/VelocityOverdrive', addedOn: '2025-06-08', eta: '—' },
+            { hash: 'd4', name: 'Stellar Warfare', genre: 'FPS', size: 78.1,
+                img: 'https://picsum.photos/seed/space-battle-ship/800/450.jpg', state: 'paused', progress: 52,
+                dlSpeed: 0, upSpeed: 0, ratio: 0.31, seeds: 312, leechs: 78, downloaded: 40.6, uploaded: 12.6,
+                savePath: 'D:/Games/StellarWarfare', addedOn: '2025-06-09', eta: 'Paused' },
+            { hash: 'd5', name: 'Arcane Legends Online', genre: 'MMO', size: 34.5,
+                img: 'https://picsum.photos/seed/fantasy-magic-castle/800/450.jpg', state: 'downloading', progress: 89,
+                dlSpeed: 22100, upSpeed: 4500, ratio: 0.67, seeds: 1244, leechs: 201, downloaded: 30.7, uploaded: 20.6,
+                savePath: 'D:/Games/ArcaneLegends', addedOn: '2025-06-11', eta: '3 min' },
+            { hash: 'd6', name: 'Dungeon Core', genre: 'Strategy', size: 22.3,
+                img: 'https://picsum.photos/seed/dungeon-dark-cave/800/450.jpg', state: 'downloading', progress: 100,
+                dlSpeed: 0, upSpeed: 1800, ratio: 4.12, seeds: 8, leechs: 34, downloaded: 22.3, uploaded: 91.9,
+                savePath: 'D:/Games/DungeonCore', addedOn: '2025-06-05', eta: '—' },
+            { hash: 'd7', name: 'Neon Drift', genre: 'Racing', size: 38.7,
+                img: 'https://picsum.photos/seed/neon-car-drift/800/450.jpg', state: 'seeding', progress: 100,
+                dlSpeed: 0, upSpeed: 5600, ratio: 6.24, seeds: 4, leechs: 42, downloaded: 38.7, uploaded: 241.5,
+                savePath: 'D:/Games/NeonDrift', addedOn: '2025-06-03', eta: '—' },
+            { hash: 'd8', name: 'Phantom Protocol', genre: 'Stealth', size: 55.9,
+                img: 'https://picsum.photos/seed/stealth-agent-night/800/450.jpg', state: 'downloading', progress: 12,
+                dlSpeed: 5400, upSpeed: 800, ratio: 0.05, seeds: 198, leechs: 56, downloaded: 6.7, uploaded: 0.3,
+                savePath: 'D:/Games/PhantomProtocol', addedOn: '2025-06-12', eta: '3h 45min' },
+            { hash: 'd9', name: 'Titan Siege', genre: 'Action', size: 104.2,
+                img: 'https://picsum.photos/seed/giant-titan-battle/800/450.jpg', state: 'downloading', progress: 5,
+                dlSpeed: 3200, upSpeed: 400, ratio: 0.02, seeds: 89, leechs: 210, downloaded: 5.2, uploaded: 0.1,
+                savePath: 'D:/Games/TitanSiege', addedOn: '2025-06-12', eta: '8h 20min' },
+            { hash: 'd10', name: 'Pixel Warriors', genre: 'Indie', size: 4.2,
+                img: 'https://picsum.photos/seed/pixel-art-retro/800/450.jpg', state: 'completed', progress: 100,
+                dlSpeed: 0, upSpeed: 900, ratio: 12.4, seeds: 3, leechs: 18, downloaded: 4.2, uploaded: 52.1,
+                savePath: 'D:/Games/PixelWarriors', addedOn: '2025-06-01', eta: '—' },
+            { hash: 'd11', name: 'Frost Empire', genre: 'Strategy', size: 41.6,
+                img: 'https://picsum.photos/seed/ice-snow-fortress/800/450.jpg', state: 'paused', progress: 78,
+                dlSpeed: 0, upSpeed: 0, ratio: 0.54, seeds: 267, leechs: 45, downloaded: 32.4, uploaded: 17.5,
+                savePath: 'D:/Games/FrostEmpire', addedOn: '2025-06-07', eta: 'Paused' },
+            { hash: 'd12', name: 'Mecha Strike Force', genre: 'Action', size: 86.3,
+                img: 'https://picsum.photos/seed/mecha-robot-fight/800/450.jpg', state: 'downloading', progress: 45,
+                dlSpeed: 11800, upSpeed: 2800, ratio: 0.28, seeds: 634, leechs: 112, downloaded: 38.8, uploaded: 10.9,
+                savePath: 'D:/Games/MechaStrike', addedOn: '2025-06-10', eta: '52 min' },
+        ];
+
+        // ── Helpers ──
+        function detectGenre(name) {
+            const n = name.toLowerCase();
+            if (n.includes('rpg') || n.includes('cyber') || n.includes('arcane') || n.includes('legend')) return 'RPG';
+            if (n.includes('rac') || n.includes('drift') || n.includes('velocity') || n.includes('need')) return 'Racing';
+            if (n.includes('fps') || n.includes('war') || n.includes('strike') || n.includes('combat')) return 'FPS';
+            if (n.includes('strat') || n.includes('dungeon') || n.includes('frost') || n.includes('anno')) return 'Strategy';
+            if (n.includes('stealth') || n.includes('phantom') || n.includes('hitman') || n.includes('solid')) return 'Stealth';
+            if (n.includes('mmo') || n.includes('online') || n.includes('wow')) return 'MMO';
+            if (n.includes('pixel') || n.includes('indie') || n.includes('hollow')) return 'Indie';
+            return 'Action';
+        }
+
+        function getGameImage(name) {
+            const seeds = {
+                'cyber': 'cyberpunk-neon-city',
+                'shadow': 'dark-fantasy-sword',
+                'velocity': 'racing-car-speed',
+                'stellar': 'space-battle-ship',
+                'arcane': 'fantasy-magic-castle',
+                'dungeon': 'dungeon-dark-cave',
+                'neon': 'neon-car-drift',
+                'phantom': 'stealth-agent-night',
+                'titan': 'giant-titan-battle',
+                'pixel': 'pixel-art-retro',
+                'frost': 'ice-snow-fortress',
+                'mecha': 'mecha-robot-fight',
+            };
+            const n = name.toLowerCase();
+            for (const [k, v] of Object.entries(seeds)) { if (n.includes(k)) return `https://picsum.photos/seed/${v}/800/450.jpg`; }
+            return `https://picsum.photos/seed/${name.replace(/\s+/g,'-').toLowerCase()}/800/450.jpg`;
+        }
+
+        function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;',
+                '>': '&gt;' })[m]); }
+
+        function parseSpeed(s) { return typeof s === 'string' ? parseInt(s) || 0 : s || 0; }
+
+        // ── Init Demo ──
+        function initDemoMode() {
+            gamesData = JSON.parse(JSON.stringify(demoGames));
+            gamesData.forEach(g => {
+                if (g.progress >= 100 && g.state !== 'seeding') {
+                    g.state = 'completed';
+                }
+            });
+            window._gamesData = gamesData;
+            updateStats();
+            renderDownloads();
+            renderLibrary();  // will use API
+            demoTickTimer = setInterval(demoTick, 2000);
+            tryConnection();
+        }
+
+        // ── Demo Tick ──
+        function demoTick() {
+            let changed = false;
+            gamesData.forEach(g => {
+                if (g.state === 'downloading') {
+                    const inc = Math.random() * 2.5 + 0.3;
+                    g.progress = Math.min(g.progress + inc, 100);
+                    g.dlSpeed = Math.floor(Math.random() * 15000 + 3000);
+                    g.upSpeed = Math.floor(Math.random() * 3000 + 500);
+                    g.downloaded = +(g.size * g.progress / 100).toFixed(1);
+                    g.uploaded = +(g.uploaded + Math.random() * 0.3).toFixed(1);
+                    g.ratio = +(g.uploaded / g.downloaded).toFixed(2);
+                    if (g.progress >= 100) {
+                        g.progress = 100;
+                        g.state = 'completed';
+                        g.dlSpeed = 0;
+                        showToast(`✅ ${g.name} download complete! Ready to play.`);
+                        renderLibrary();  // Refresh library when download completes
+                    }
+                    changed = true;
+                } else if (g.state === 'seeding') {
+                    g.upSpeed = Math.floor(Math.random() * 4000 + 1000);
+                    g.uploaded = +(g.uploaded + Math.random() * 0.5).toFixed(1);
+                    g.ratio = +(g.uploaded / g.downloaded).toFixed(2);
+                    changed = true;
+                }
+            });
+            if (changed) { updateStats();
+                renderDownloads(); }
+        }
+
+        // ── Stats ──
+        function updateStats() {
+            const downloading = gamesData.filter(g => g.state === 'downloading');
+            const totalDl = downloading.reduce((s, g) => s + g.dlSpeed, 0);
+            const totalUp = gamesData.reduce((s, g) => s + g.upSpeed, 0);
+            const totalDlData = gamesData.reduce((s, g) => s + g.downloaded, 0);
+            const totalUpData = gamesData.reduce((s, g) => s + g.uploaded, 0);
+            document.getElementById('dlSpeed').textContent = totalDl > 1000 ? (totalDl / 1000).toFixed(1) + 'M' : Math.round(
+                totalDl);
+            document.getElementById('upSpeed').textContent = totalUp > 1000 ? (totalUp / 1000).toFixed(1) + 'M' : Math.round(
+                totalUp);
+            document.getElementById('dlTotal').textContent = totalDlData.toFixed(1);
+            document.getElementById('upTotal').textContent = totalUpData.toFixed(1);
+            document.getElementById('totalGames').textContent = gamesData.length;
+            document.getElementById('activeDownloads').textContent = downloading.length;
+        }
+
+        // ── Render Downloads ──
+        function renderDownloads() {
+            const grid = document.getElementById('dlGrid');
+            let list = gamesData;
+            if (currentFilter !== 'all') {
+                if (currentFilter === 'completed') list = list.filter(g => g.state === 'completed' || g.state === 'uploading' ||
+                    g.state === 'seeding' || g.state === 'stalledUP');
+                else if (currentFilter === 'downloading') list = list.filter(g => g.state === 'downloading' || g.state ===
+                    'stalledDL' || g.state === 'metaDL' || g.state === 'forcedDL');
+                else if (currentFilter === 'paused') list = list.filter(g => g.state === 'paused' || g.state === 'pausedDL' ||
+                    g.state === 'pausedUP');
+                else if (currentFilter === 'seeding') list = list.filter(g => g.state === 'seeding' || g.state ===
+                    'uploading' || g.state === 'stalledUP');
+            }
+
+            if (!list.length) {
+                grid.innerHTML =
+                    `<div style="text-align:center;padding:30px;color:rgba(255,255,255,0.2);"><i class="fas fa-download" style="font-size:24px;display:block;margin-bottom:10px;"></i> No downloads match your filter.</div>`;
+                return;
+            }
+
+            grid.innerHTML = list.map(g => {
+                const isComplete = g.state === 'completed' || g.state === 'uploading' || g.state === 'seeding' ||
+                    g.state === 'stalledUP';
+                const isPaused = g.state === 'paused' || g.state === 'pausedDL' || g.state === 'pausedUP';
+                const isDownloading = g.state === 'downloading' || g.state === 'stalledDL' || g.state === 'metaDL' ||
+                    g.state === 'forcedDL';
+
+                let statusClass = 'status-downloading';
+                let statusLabel = 'Downloading';
+                let progressClass = 'fill-dl';
+                if (isComplete) { statusClass = 'status-completed';
+                    statusLabel = '✓ Completed';
+                    progressClass = 'fill-done'; } else if (isPaused) { statusClass = 'status-paused';
+                    statusLabel = '⏸ Paused';
+                    progressClass = 'fill-paused'; }
+
+                let speedText = isComplete ? `${g.upSpeed} KB/s ↑` : isPaused ? 'Paused' : `${g.dlSpeed} KB/s ↓`;
+                let etaText = g.eta && !isComplete && !isPaused ? g.eta : '';
+
+                let actions = '';
+                if (isComplete) {
+                    actions =
+                        `<button class="btn btn--primary btn--sm" onclick="showToast('Launching ${g.name}...')" style="padding:4px 14px;font-size:11px;border-radius:6px;background:linear-gradient(135deg,#4da6ff,#2563eb);border:none;color:#fff;cursor:pointer;"><i class="fas fa-play"></i> Play</button>`;
+                } else if (isPaused) {
+                    actions =
+                        `<button class="resume-btn" onclick="resumeTorrent('${g.hash}')"><i class="fas fa-play"></i> Resume</button>`;
+                } else {
+                    actions =
+                        `<button class="pause-btn" onclick="pauseTorrent('${g.hash}')"><i class="fas fa-pause"></i> Pause</button>`;
+                }
+                actions +=
+                ` <button class="remove-btn" onclick="confirmRemoveTorrent('${g.hash}','${g.name}')"><i class="fas fa-trash"></i></button>`;
+
+                return `
+                <div class="dl-item">
+                    <div class="top">
+                        <span class="name">${g.name}</span>
+                        <span class="status ${statusClass}">${statusLabel}</span>
+                    </div>
+                    <div class="progress"><div class="fill ${progressClass}" style="width:${g.progress}%"></div></div>
+                    <div class="meta">
+                        <span>${g.size} GB · ${Math.round(g.progress)}%</span>
+                        <span>${speedText} ${etaText ? '· '+etaText : ''}</span>
+                        <span>Seeds ${g.seeds||0} / Leechs ${g.leechs||0}</span>
+                    </div>
+                    <div class="actions">${actions}</div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        // ── Render Library (API-based) ──
+        async function renderLibrary() {
+            const grid = document.getElementById('libraryGrid');
+            try {
+                const res = await fetch('/api/library');
+                const data = await res.json();
+                const library = data.library || [];
+
+                if (!library.length) {
+                    grid.innerHTML = `
+                        <div class="lib-empty">
+                            <i class="fas fa-gamepad"></i>
+                            <h3>Your Library is Empty</h3>
+                            <p>Download a game from the <span class="highlight" onclick="navTo(document.querySelector('.rb[data-panel=\\'downloads\\']'),'downloads')">Downloads</span> tab and it will appear here when complete.</p>
+                        </div>
+                    `;
+                    updateLibraryBadge(0);
+                    return;
+                }
+
+                grid.innerHTML = library.map(g => `
+                    <div class="store-card" onclick="showToast('🎮 Launching ${g.name}...')">
+                        <div class="cover" style="background:linear-gradient(135deg,#1a1a2e,#16213e);background-image:url('${g.img || 'https://picsum.photos/seed/'+g.name.replace(/\\s+/g,'-').toLowerCase()+'/400/225.jpg'}');background-size:cover;background-position:center;">
+                            <div class="overlay"><button>▶ Play</button></div>
+                            <span class="badge" style="background:rgba(74,222,128,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.15);">✓ Ready</span>
+                            <div style="position:absolute;bottom:10px;right:12px;font-size:9px;color:rgba(255,255,255,0.3);">${g.size || '?'} GB</div>
+                        </div>
+                        <div class="info">
+                            <h4>${g.name}</h4>
+                            <div class="price" style="font-size:10px;color:rgba(255,255,255,0.2);display:flex;justify-content:space-between;align-items:center;">
+                                <span>Ready to play</span>
+                                <span style="color:rgba(74,222,128,0.4);font-size:9px;"><i class="fas fa-check-circle"></i> Downloaded</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                updateLibraryBadge(library.length);
+            } catch (e) {
+                console.warn('Failed to fetch library, falling back to local data:', e);
+                // fallback to local gamesData
+                renderLibraryFallback();
+            }
+        }
+
+        function renderLibraryFallback() {
+            const data = window._gamesData || [];
+            const completed = data.filter(g => g.state === 'completed' || g.state === 'seeding' || g.state === 'uploading');
+            const grid = document.getElementById('libraryGrid');
+            if (!completed.length) {
+                grid.innerHTML = `
+                    <div class="lib-empty">
+                        <i class="fas fa-gamepad"></i>
+                        <h3>Your Library is Empty</h3>
+                        <p>Download a game from the <span class="highlight" onclick="navTo(document.querySelector('.rb[data-panel=\\'downloads\\']'),'downloads')">Downloads</span> tab and it will appear here when complete.</p>
+                    </div>
+                `;
+                updateLibraryBadge(0);
+                return;
+            }
+            grid.innerHTML = completed.map(g => `
+                <div class="store-card" onclick="showToast('🎮 Launching ${g.name}...')">
+                    <div class="cover" style="background:linear-gradient(135deg,#1a1a2e,#16213e);background-image:url('${g.img || 'https://picsum.photos/seed/'+g.name.replace(/\\s+/g,'-').toLowerCase()+'/400/225.jpg'}');background-size:cover;background-position:center;">
+                        <div class="overlay"><button>▶ Play</button></div>
+                        <span class="badge" style="background:rgba(74,222,128,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.15);">✓ Ready</span>
+                        <div style="position:absolute;bottom:10px;right:12px;font-size:9px;color:rgba(255,255,255,0.3);">${g.size} GB</div>
+                    </div>
+                    <div class="info">
+                        <h4>${g.name}</h4>
+                        <div class="price" style="font-size:10px;color:rgba(255,255,255,0.2);display:flex;justify-content:space-between;align-items:center;">
+                            <span>Ready to play</span>
+                            <span style="color:rgba(74,222,128,0.4);font-size:9px;"><i class="fas fa-check-circle"></i> Downloaded</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            updateLibraryBadge(completed.length);
+        }
+
+        function updateLibraryBadge(count) {
+            const badgePanel = document.getElementById('libBadgePanel');
+            const badgeRail = document.getElementById('libBadgeRail');
+            if (count > 0) {
+                badgePanel.style.display = '';
+                badgePanel.textContent = count;
+                badgeRail.style.display = '';
+            } else {
+                badgePanel.style.display = 'none';
+                badgeRail.style.display = 'none';
+            }
+        }
+
+        // ── Confirm Dialog ──
+        function confirmDialog(title, message) {
+            return new Promise((resolve) => {
+                const overlay = document.createElement('div');
+                overlay.className = 'confirm-overlay';
+                overlay.innerHTML = `
+                    <div class="confirm-dialog">
+                        <div class="confirm-icon"><i class="fas fa-trash-alt"></i></div>
+                        <h3>${escapeHtml(title)}</h3>
+                        <p>${escapeHtml(message)}</p>
+                        <div class="confirm-buttons">
+                            <button class="confirm-cancel">Cancel</button>
+                            <button class="confirm-remove">Remove</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+                const cancelBtn = overlay.querySelector('.confirm-cancel');
+                const removeBtn = overlay.querySelector('.confirm-remove');
+                const cleanup = () => overlay.remove();
+                cancelBtn.onclick = () => { cleanup();
+                    resolve(false); };
+                removeBtn.onclick = () => { cleanup();
+                    resolve(true); };
+                overlay.onclick = (e) => { if (e.target === overlay) { cleanup();
+                        resolve(false); } };
+            });
+        }
+
+        async function confirmRemoveTorrent(hash, name) {
+            const confirmed = await confirmDialog(`Remove "${name}"?`,
+                'The game files will remain on your disk. You can re-add the torrent later.');
+            if (!confirmed) return;
+
+            const btns = document.querySelectorAll('.remove-btn');
+            let targetBtn = null;
+            for (let btn of btns) {
+                const onclickAttr = btn.getAttribute('onclick');
+                if (onclickAttr && onclickAttr.includes(hash)) {
+                    targetBtn = btn;
+                    break;
+                }
+            }
+
+            if (targetBtn) {
+                targetBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i>';
+                targetBtn.disabled = true;
+            }
+
+            if (isConnected) {
+                try {
+                    const res = await fetch(`/api/remove/${hash}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ delete_files: false })
+                    });
+                    const data = await res.json();
+                    if (data.error) {
+                        showToast(data.error, 'fa-exclamation-triangle');
+                    } else {
+                        showToast(`"${name}" removed from library`, 'fa-check');
+                        await loadTorrents();
+                        renderLibrary();  // refresh library
+                    }
+                } catch (e) {
+                    showToast('Failed to remove: ' + e.message, 'fa-exclamation-triangle');
+                }
+            } else {
+                gamesData = gamesData.filter(x => x.hash !== hash);
+                window._gamesData = gamesData;
+                updateStats();
+                renderDownloads();
+                renderLibrary();
+                showToast(`"${name}" removed from library`, 'fa-check');
+            }
+
+            if (targetBtn) {
+                targetBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                targetBtn.disabled = false;
+            }
+        }
+
+        // ── PRODUCT-BASED ADD TORRENT ──
+        async function addTorrent() {
+            const input = document.getElementById('magnetInput');
+            const raw = input.value.trim();
+            if (!raw) { showToast('Please enter a product key or magnet link', 'fa-exclamation-circle'); return; }
+
+            let magnet = raw;
+
+            const matched = productList_Key.find(p => p.product.toLowerCase() === raw.toLowerCase());
+            if (matched) {
+                magnet = matched.magnet;
+                showToast(`🔍 Found product: ${matched.product}`, 'fa-check');
+            } else if (!raw.startsWith('magnet:')) {
+                showToast('❌ Unknown product. Type a valid game name or paste a magnet link.', 'fa-exclamation-triangle');
+                return;
+            }
+
+            if (isConnected) {
+                const btn = document.getElementById('addBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Adding...';
+                btn.disabled = true;
+                try {
+                    const res = await fetch('/api/add', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ magnet }) });
+                    const data = await res.json();
+                    if (data.error) { showToast(data.error, 'fa-exclamation-triangle'); } else { input.value = '';
+                        await loadTorrents();
+                        showToast('Game added to downloads!', 'fa-check'); }
+                } catch (e) { showToast('Failed to add: ' + e.message, 'fa-exclamation-triangle'); } finally {
+                    btn.innerHTML = '<i class="fas fa-download"></i> Download';
+                    btn.disabled = false;
+                }
+            } else {
+                const name = matched ? matched.product : (raw.startsWith('magnet:') ? 'Unknown Game' : raw);
+                const hash = 'demo-' + Date.now();
+                const newGame = {
+                    hash,
+                    name: name,
+                    genre: detectGenre(name),
+                    size: +(Math.random() * 80 + 10).toFixed(1),
+                    img: getGameImage(name),
+                    state: 'downloading',
+                    progress: 0,
+                    dlSpeed: Math.floor(Math.random() * 12000 + 2000),
+                    upSpeed: Math.floor(Math.random() * 1500 + 200),
+                    ratio: 0,
+                    seeds: Math.floor(Math.random() * 500 + 50),
+                    leechs: Math.floor(Math.random() * 80 + 10),
+                    downloaded: 0,
+                    uploaded: 0,
+                    savePath: 'D:/Games/' + name.replace(/\s+/g, ''),
+                    addedOn: new Date().toISOString().split('T')[0],
+                    eta: 'Calculating...'
+                };
+                gamesData.unshift(newGame);
+                window._gamesData = gamesData;
+                updateStats();
+                renderDownloads();
+                renderLibrary();
+                showToast(`Started downloading ${name}`, 'fa-download');
+                input.value = '';
+            }
+        }
+
+        async function pauseTorrent(hash) {
+            if (isConnected) {
+                await fetch(`/api/pause/${hash}`, { method: 'POST' });
+                await loadTorrents();
+            } else {
+                const g = gamesData.find(x => x.hash === hash);
+                if (g && g.state === 'downloading') {
+                    g.state = 'paused';
+                    g.dlSpeed = 0;
+                    g.eta = 'Paused';
+                    window._gamesData = gamesData;
+                    updateStats();
+                    renderDownloads();
+                    showToast(`${g.name} paused`, 'fa-pause');
+                }
+            }
+        }
+
+        async function resumeTorrent(hash) {
+            if (isConnected) {
+                await fetch(`/api/resume/${hash}`, { method: 'POST' });
+                await loadTorrents();
+            } else {
+                const g = gamesData.find(x => x.hash === hash);
+                if (g && (g.state === 'paused' || g.state === 'pausedDL')) {
+                    g.state = 'downloading';
+                    g.dlSpeed = Math.floor(Math.random() * 10000 + 2000);
+                    g.eta = 'Calculating...';
+                    window._gamesData = gamesData;
+                    updateStats();
+                    renderDownloads();
+                    showToast(`${g.name} resumed`, 'fa-play');
+                }
+            }
+        }
+
+        async function pauseAll() {
+            if (isConnected) {
+                await fetch('/api/pause/all', { method: 'POST' });
+                await loadTorrents();
+            } else {
+                gamesData.forEach(g => { if (g.state === 'downloading') { g.state = 'paused';
+                        g.dlSpeed = 0;
+                        g.eta = 'Paused'; } });
+                window._gamesData = gamesData;
+                updateStats();
+                renderDownloads();
+                showToast('All downloads paused', 'fa-pause');
+            }
+        }
+
+        async function resumeAll() {
+            if (isConnected) {
+                await fetch('/api/resume/all', { method: 'POST' });
+                await loadTorrents();
+            } else {
+                gamesData.forEach(g => { if (g.state === 'paused') { g.state = 'downloading';
+                        g.dlSpeed = Math.floor(Math.random() * 8000 + 2000);
+                        g.eta = 'Calculating...'; } });
+                window._gamesData = gamesData;
+                updateStats();
+                renderDownloads();
+                showToast('All downloads resumed', 'fa-play');
+            }
+        }
+
+        function setFilter(filter, btn) {
+            currentFilter = filter;
+            document.querySelectorAll('.dl-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+            if (isConnected) loadTorrents();
+            else renderDownloads();
+        }
+
+        // ── Connection ──
+        async function tryConnection() {
+            try {
+                const res = await fetch('/api/status', { signal: AbortSignal.timeout(2000) });
+                const data = await res.json();
+                if (data.connected) {
+                    isConnected = true;
+                    clearInterval(demoTickTimer);
+                    updateStatusUI(true);
+                    refreshTimer = setInterval(refreshData, 1000);
+                    refreshData();
+                    showToast('Connected to GameVault!', 'fa-plug');
+                }
+            } catch (e) { /* stay in demo mode */ }
+        }
+
+        async function reconnect() {
+            const card = document.getElementById('statusCard');
+            card.className = 'status-card demo';
+            document.getElementById('statusTitle').textContent = 'Connecting...';
+            document.getElementById('statusMessage').textContent = 'Attempting to reach qBittorrent...';
+            try {
+                const res = await fetch('/api/reconnect', { method: 'POST', signal: AbortSignal.timeout(4000) });
+                const data = await res.json();
+                if (data.connected) {
+                    isConnected = true;
+                    clearInterval(demoTickTimer);
+                    updateStatusUI(true);
+                    refreshTimer = setInterval(refreshData, 1000);
+                    refreshData();
+                    showToast('Connected to qBittorrent!', 'fa-plug');
+                } else { stayDemo(); }
+            } catch (e) { stayDemo(); }
+        }
+
+        function stayDemo() {
+            isConnected = false;
+            const card = document.getElementById('statusCard');
+            card.className = 'status-card demo';
+            document.getElementById('statusTitle').textContent = 'Demo Mode Active';
+            document.getElementById('statusMessage').textContent = 'Showing sample games — connect to qBittorrent for real downloads';
+            showToast('qBittorrent not found — demo mode', 'fa-flask');
+        }
+
+        function updateStatusUI(connected) {
+            const card = document.getElementById('statusCard');
+            if (connected) {
+                card.className = 'status-card connected';
+                document.getElementById('statusTitle').textContent = 'Connected to GameVault';
+                document.getElementById('statusMessage').textContent = 'Live sync active — managing real downloads';
+                document.getElementById('addBtn').disabled = false;
+            } else {
+                card.className = 'status-card disconnected';
+                document.getElementById('statusTitle').textContent = 'Connection Lost';
+                document.getElementById('statusMessage').textContent = 'Unable to reach qBittorrent Web UI';
+                document.getElementById('addBtn').disabled = true;
+            }
+        }
+
+        async function refreshData() {
+            if (!isConnected) return;
+            await Promise.all([loadStatus(), loadTorrents(), loadStats()]);
+            renderLibrary(); // also refresh library
+        }
+
+        async function loadStatus() {
+            try {
+                const res = await fetch('/api/status');
+                const data = await res.json();
+                isConnected = data.connected;
+                updateStatusUI(data.connected);
+                document.getElementById('addBtn').disabled = !data.connected;
+            } catch (e) {}
+        }
+
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/transfer');
+                const s = await res.json();
+                if (s.connected !== false) {
+                    document.getElementById('dlSpeed').textContent = s.dl_speed;
+                    document.getElementById('upSpeed').textContent = s.up_speed;
+                    document.getElementById('dlTotal').textContent = s.dl_data;
+                    document.getElementById('upTotal').textContent = s.up_data;
+                }
+            } catch (e) {}
+        }
+
+        async function loadTorrents() {
+            try {
+                const res = await fetch(`/api/torrents?filter=${currentFilter}`);
+                const data = await res.json();
+                if (data.error) return;
+                const torrents = data.torrents || [];
+                gamesData = torrents.map(t => ({
+                    hash: t.hash,
+                    name: t.name,
+                    genre: detectGenre(t.name),
+                    size: t.size,
+                    img: getGameImage(t.name),
+                    state: t.state,
+                    progress: t.progress,
+                    dlSpeed: parseSpeed(t.download_speed),
+                    upSpeed: parseSpeed(t.upload_speed),
+                    ratio: t.ratio,
+                    seeds: t.num_seeds,
+                    leechs: t.num_leechs,
+                    downloaded: t.downloaded || t.size * t.progress / 100,
+                    uploaded: t.uploaded || 0,
+                    savePath: t.save_path,
+                    addedOn: t.added_on,
+                    eta: t.eta || '—'
+                }));
+                window._gamesData = gamesData;
+                updateStats();
+                renderDownloads();
+                renderLibrary();
+            } catch (e) {}
+        }
+
+        // ── HIDE/SHOW PRODUCT KEY AREA BASED ON HASH ──
+        function handleProductKeyHash() {
+            const container = document.getElementById('productKeyContainer');
+            if (!container) return;
+
+            const hash = window.location.hash;
+            const hashValue = hash ? hash.substring(1) : '';
+
+            if (hash === '#ProductKey') {
+                console.log('🔑 #ProductKey detected – showing product key input');
+                container.style.display = 'block';
+                const downloadsLink = document.querySelector('.mi[data-key="downloads"]');
+                if (downloadsLink && !downloadsLink.classList.contains('on')) {
+                    activateDownloads(downloadsLink);
+                }
+                return;
+            }
+
+            if (hashValue.startsWith('magnet:')) {
+                console.log('🧲 Magnet link detected in hash');
+                container.style.display = 'block';
+                const input = document.getElementById('magnetInput');
+                if (input) {
+                    input.value = decodeURIComponent(hashValue);
+                }
+                const downloadsLink = document.querySelector('.mi[data-key="downloads"]');
+                if (downloadsLink && !downloadsLink.classList.contains('on')) {
+                    activateDownloads(downloadsLink);
+                }
+                setTimeout(() => {
+                    addTorrent();
+                }, 300);
+                return;
+            }
+
+            container.style.display = 'none';
+        }
+
+        // ── INIT ──
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStore();
+            initDemoMode();
+            // Show home by default
+            document.querySelectorAll('.cview').forEach(v => v.classList.add('hidden'));
+            document.getElementById('c-home').classList.remove('hidden');
+            document.getElementById('iwrap').style.display = '';
+            document.getElementById('mainArea').style.display = 'none';
+
+            handleProductKeyHash();
+
+            // Refresh library every 30 seconds if visible
+            setInterval(() => {
+                if (!document.getElementById('c-library').classList.contains('hidden')) {
+                    renderLibrary();
+                }
+            }, 30000);
+        });
+
+        window.addEventListener('hashchange', handleProductKeyHash);
+
+        document.getElementById('frame').addEventListener('load', () => {
+            document.getElementById('ifLoad').classList.add('gone');
+        });
+
+        console.log('🚀 Nexus Launcher v2.0 — Persistent Library via JSON');
+    </script>
+
+</body>
+
+</html>
