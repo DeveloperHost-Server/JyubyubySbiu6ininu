@@ -1,3 +1,25 @@
+"""Main application entry point"""
+import threading
+import time
+import os
+import sys
+import json
+from functools import wraps
+from datetime import datetime
+
+from flask import Flask, jsonify, request, render_template_string, make_response
+from flask_cors import CORS
+import webview
+import qbittorrentapi
+
+import config
+from config import *
+from utils import *
+
+# ============ DARK MODE (Windows) ============
+import ctypes
+import ctypes.wintypes
+
 
 DWMWA_USE_IMMERSIVE_DARK_MODE = 20
 
