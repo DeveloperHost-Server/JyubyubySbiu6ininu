@@ -1628,6 +1628,39 @@
         #productKeyContainer {
             display: none;
         }
+        
+        /* ── DOWNLOAD EMPTY STATE ── */
+        #dl-empty {
+            text-align: center;
+            padding: 40px 20px;
+            background: #101014;
+            border-radius: 16px;
+            border: 1px dashed rgba(77, 166, 255, 0.12);
+            color: rgba(255, 255, 255, 0.3);
+        }
+        #dl-empty i {
+            font-size: 40px;
+            color: #4ade80;
+            opacity: 0.4;
+            margin-bottom: 12px;
+        }
+        #dl-empty h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        #dl-empty p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        #dl-empty .highlight {
+            color: #4da6ff;
+            cursor: pointer;
+        }
+        #dl-empty .highlight:hover {
+            text-decoration: underline;
+        }
     </style>
 
 </head>
@@ -1983,6 +2016,13 @@
                 <!-- Download List -->
                 <div class="dl-grid" id="dlGrid">
                     <div class="loading" style="text-align:center;padding:30px;color:rgba(255,255,255,0.2);"><div class="spinner"></div><p>Loading downloads...</p></div>
+                </div>
+                
+                <!-- Empty State (hidden by default) -->
+                <div id="dl-empty" style="display:none;">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>All downloads complete! 🎉</h3>
+                    <p>Your games are ready to play in the <span class="highlight" onclick="navTo(document.querySelector('.rb[data-panel=\\'library\\']'),'library')">Library</span>.</p>
                 </div>
             </div>
 
@@ -2419,6 +2459,8 @@
         // ── Render Downloads ──
         function renderDownloads() {
             const grid = document.getElementById('dlGrid');
+            const empty = document.getElementById('dl-empty');
+            
             let list = gamesData;
             if (currentFilter !== 'all') {
                 if (currentFilter === 'completed') list = list.filter(g => g.state === 'completed' || g.state === 'uploading' ||
@@ -2431,11 +2473,16 @@
                     'uploading' || g.state === 'stalledUP');
             }
 
+            // If no items, show empty state, hide grid
             if (!list.length) {
-                grid.innerHTML =
-                    `<div style="text-align:center;padding:30px;color:rgba(255,255,255,0.2);"><i class="fas fa-download" style="font-size:24px;display:block;margin-bottom:10px;"></i> No downloads match your filter.</div>`;
+                grid.style.display = 'none';
+                empty.style.display = 'block';
                 return;
             }
+
+            // Otherwise show grid, hide empty
+            grid.style.display = '';
+            empty.style.display = 'none';
 
             grid.innerHTML = list.map(g => {
                 const isComplete = g.state === 'completed' || g.state === 'uploading' || g.state === 'seeding' ||
