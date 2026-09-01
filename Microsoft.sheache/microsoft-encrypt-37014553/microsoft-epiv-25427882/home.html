@@ -1640,7 +1640,7 @@
         }
         #dl-empty i {
             font-size: 40px;
-            color: #4ade80;
+            color: #4da6ff;
             opacity: 0.4;
             margin-bottom: 12px;
         }
@@ -1967,12 +1967,12 @@
             <div id="c-downloads" class="cview hidden">
 
                 <!-- Status Card -->
-                <div class="status-card demo" id="statusCard" style="background:#101014;border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.04);border-left:4px solid #4da6ff;">
+                <div class="status-card" id="statusCard" style="background:#101014;border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.04);border-left:4px solid #4da6ff;">
                     <div class="status-info" style="display:flex;align-items:center;gap:14px;">
-                        <div class="status-icon demo" style="width:38px;height:38px;border-radius:50%;background:rgba(77,166,255,0.1);color:#4da6ff;display:flex;align-items:center;justify-content:center;font-size:16px;"><i class="fas fa-flask"></i></div>
+                        <div class="status-icon" style="width:38px;height:38px;border-radius:50%;background:rgba(77,166,255,0.1);color:#4da6ff;display:flex;align-items:center;justify-content:center;font-size:16px;"><i class="fas fa-plug"></i></div>
                         <div class="status-text">
-                            <h3 id="statusTitle" style="font-size:14px;font-weight:700;">Demo Mode Active</h3>
-                            <p id="statusMessage" style="font-size:12px;color:rgba(255,255,255,0.3);">Showing sample downloads — connect to qBittorrent for real</p>
+                            <h3 id="statusTitle" style="font-size:14px;font-weight:700;">Disconnected</h3>
+                            <p id="statusMessage" style="font-size:12px;color:rgba(255,255,255,0.3);">qBittorrent not reachable — click Connect to try again</p>
                         </div>
                     </div>
                     <button class="btn btn--primary" style="padding:8px 18px;font-size:0.75rem;border-radius:8px;background:linear-gradient(135deg,#4da6ff,#2563eb);border:none;color:#fff;cursor:pointer;transition:all 0.2s;box-shadow:0 0 20px rgba(77,166,255,0.2);" onclick="reconnect()"><i class="fas fa-sync-alt"></i> Connect</button>
@@ -2020,9 +2020,9 @@
                 
                 <!-- Empty State (hidden by default) -->
                 <div id="dl-empty" style="display:none;">
-                    <i class="fas fa-check-circle"></i>
-                    <h3>All downloads complete! 🎉</h3>
-                    <p>Your games are ready to play in the <span class="highlight" onclick="navTo(document.querySelector('.rb[data-panel=\\'library\\']'),'library')">Library</span>.</p>
+                    <i class="fas fa-download"></i>
+                    <h3>No downloads yet</h3>
+                    <p>Add a torrent or connect to qBittorrent to get started.</p>
                 </div>
             </div>
 
@@ -2300,59 +2300,6 @@
         let isConnected = false;
         let gamesData = [];
         let refreshTimer = null;
-        let demoTickTimer = null;
-
-        // DEMO DATA
-        const demoGames = [
-            { hash: 'd1', name: 'Cyber Nexus 2087', genre: 'RPG', size: 92.4,
-                img: 'https://picsum.photos/seed/cyberpunk-neon-city/800/450.jpg', state: 'downloading', progress: 67,
-                dlSpeed: 14200, upSpeed: 2100, ratio: 0.42, seeds: 847, leechs: 124, downloaded: 61.9, uploaded: 26.0,
-                savePath: 'D:/Games/CyberNexus2087', addedOn: '2025-06-10', eta: '24 min' },
-            { hash: 'd2', name: 'Shadow Realm: Eclipse', genre: 'Action', size: 67.2,
-                img: 'https://picsum.photos/seed/dark-fantasy-sword/800/450.jpg', state: 'downloading', progress: 34,
-                dlSpeed: 8600, upSpeed: 1200, ratio: 0.18, seeds: 523, leechs: 89, downloaded: 22.8, uploaded: 4.1,
-                savePath: 'D:/Games/ShadowRealm', addedOn: '2025-06-11', eta: '1h 12min' },
-            { hash: 'd3', name: 'Velocity Overdrive', genre: 'Racing', size: 45.8,
-                img: 'https://picsum.photos/seed/racing-car-speed/800/450.jpg', state: 'downloading', progress: 100,
-                dlSpeed: 0, upSpeed: 3400, ratio: 2.81, seeds: 12, leechs: 67, downloaded: 45.8, uploaded: 128.7,
-                savePath: 'D:/Games/VelocityOverdrive', addedOn: '2025-06-08', eta: '—' },
-            { hash: 'd4', name: 'Stellar Warfare', genre: 'FPS', size: 78.1,
-                img: 'https://picsum.photos/seed/space-battle-ship/800/450.jpg', state: 'paused', progress: 52,
-                dlSpeed: 0, upSpeed: 0, ratio: 0.31, seeds: 312, leechs: 78, downloaded: 40.6, uploaded: 12.6,
-                savePath: 'D:/Games/StellarWarfare', addedOn: '2025-06-09', eta: 'Paused' },
-            { hash: 'd5', name: 'Arcane Legends Online', genre: 'MMO', size: 34.5,
-                img: 'https://picsum.photos/seed/fantasy-magic-castle/800/450.jpg', state: 'downloading', progress: 89,
-                dlSpeed: 22100, upSpeed: 4500, ratio: 0.67, seeds: 1244, leechs: 201, downloaded: 30.7, uploaded: 20.6,
-                savePath: 'D:/Games/ArcaneLegends', addedOn: '2025-06-11', eta: '3 min' },
-            { hash: 'd6', name: 'Dungeon Core', genre: 'Strategy', size: 22.3,
-                img: 'https://picsum.photos/seed/dungeon-dark-cave/800/450.jpg', state: 'downloading', progress: 100,
-                dlSpeed: 0, upSpeed: 1800, ratio: 4.12, seeds: 8, leechs: 34, downloaded: 22.3, uploaded: 91.9,
-                savePath: 'D:/Games/DungeonCore', addedOn: '2025-06-05', eta: '—' },
-            { hash: 'd7', name: 'Neon Drift', genre: 'Racing', size: 38.7,
-                img: 'https://picsum.photos/seed/neon-car-drift/800/450.jpg', state: 'seeding', progress: 100,
-                dlSpeed: 0, upSpeed: 5600, ratio: 6.24, seeds: 4, leechs: 42, downloaded: 38.7, uploaded: 241.5,
-                savePath: 'D:/Games/NeonDrift', addedOn: '2025-06-03', eta: '—' },
-            { hash: 'd8', name: 'Phantom Protocol', genre: 'Stealth', size: 55.9,
-                img: 'https://picsum.photos/seed/stealth-agent-night/800/450.jpg', state: 'downloading', progress: 12,
-                dlSpeed: 5400, upSpeed: 800, ratio: 0.05, seeds: 198, leechs: 56, downloaded: 6.7, uploaded: 0.3,
-                savePath: 'D:/Games/PhantomProtocol', addedOn: '2025-06-12', eta: '3h 45min' },
-            { hash: 'd9', name: 'Titan Siege', genre: 'Action', size: 104.2,
-                img: 'https://picsum.photos/seed/giant-titan-battle/800/450.jpg', state: 'downloading', progress: 5,
-                dlSpeed: 3200, upSpeed: 400, ratio: 0.02, seeds: 89, leechs: 210, downloaded: 5.2, uploaded: 0.1,
-                savePath: 'D:/Games/TitanSiege', addedOn: '2025-06-12', eta: '8h 20min' },
-            { hash: 'd10', name: 'Pixel Warriors', genre: 'Indie', size: 4.2,
-                img: 'https://picsum.photos/seed/pixel-art-retro/800/450.jpg', state: 'completed', progress: 100,
-                dlSpeed: 0, upSpeed: 900, ratio: 12.4, seeds: 3, leechs: 18, downloaded: 4.2, uploaded: 52.1,
-                savePath: 'D:/Games/PixelWarriors', addedOn: '2025-06-01', eta: '—' },
-            { hash: 'd11', name: 'Frost Empire', genre: 'Strategy', size: 41.6,
-                img: 'https://picsum.photos/seed/ice-snow-fortress/800/450.jpg', state: 'paused', progress: 78,
-                dlSpeed: 0, upSpeed: 0, ratio: 0.54, seeds: 267, leechs: 45, downloaded: 32.4, uploaded: 17.5,
-                savePath: 'D:/Games/FrostEmpire', addedOn: '2025-06-07', eta: 'Paused' },
-            { hash: 'd12', name: 'Mecha Strike Force', genre: 'Action', size: 86.3,
-                img: 'https://picsum.photos/seed/mecha-robot-fight/800/450.jpg', state: 'downloading', progress: 45,
-                dlSpeed: 11800, upSpeed: 2800, ratio: 0.28, seeds: 634, leechs: 112, downloaded: 38.8, uploaded: 10.9,
-                savePath: 'D:/Games/MechaStrike', addedOn: '2025-06-10', eta: '52 min' },
-        ];
 
         // ── Helpers ──
         function detectGenre(name) {
@@ -2392,60 +2339,13 @@
 
         function parseSpeed(s) { return typeof s === 'string' ? parseInt(s) || 0 : s || 0; }
 
-        // ── Init Demo ──
-        function initDemoMode() {
-            gamesData = JSON.parse(JSON.stringify(demoGames));
-            gamesData.forEach(g => {
-                if (g.progress >= 100 && g.state !== 'seeding') {
-                    g.state = 'completed';
-                }
-            });
-            window._gamesData = gamesData;
-            updateStats();
-            renderDownloads();
-            renderLibrary();  // will use API
-            demoTickTimer = setInterval(demoTick, 2000);
-            tryConnection();
-        }
-
-        // ── Demo Tick ──
-        function demoTick() {
-            let changed = false;
-            gamesData.forEach(g => {
-                if (g.state === 'downloading') {
-                    const inc = Math.random() * 2.5 + 0.3;
-                    g.progress = Math.min(g.progress + inc, 100);
-                    g.dlSpeed = Math.floor(Math.random() * 15000 + 3000);
-                    g.upSpeed = Math.floor(Math.random() * 3000 + 500);
-                    g.downloaded = +(g.size * g.progress / 100).toFixed(1);
-                    g.uploaded = +(g.uploaded + Math.random() * 0.3).toFixed(1);
-                    g.ratio = +(g.uploaded / g.downloaded).toFixed(2);
-                    if (g.progress >= 100) {
-                        g.progress = 100;
-                        g.state = 'completed';
-                        g.dlSpeed = 0;
-                        showToast(`✅ ${g.name} download complete! Ready to play.`);
-                        renderLibrary();  // Refresh library when download completes
-                    }
-                    changed = true;
-                } else if (g.state === 'seeding') {
-                    g.upSpeed = Math.floor(Math.random() * 4000 + 1000);
-                    g.uploaded = +(g.uploaded + Math.random() * 0.5).toFixed(1);
-                    g.ratio = +(g.uploaded / g.downloaded).toFixed(2);
-                    changed = true;
-                }
-            });
-            if (changed) { updateStats();
-                renderDownloads(); }
-        }
-
         // ── Stats ──
         function updateStats() {
-            const downloading = gamesData.filter(g => g.state === 'downloading');
-            const totalDl = downloading.reduce((s, g) => s + g.dlSpeed, 0);
-            const totalUp = gamesData.reduce((s, g) => s + g.upSpeed, 0);
-            const totalDlData = gamesData.reduce((s, g) => s + g.downloaded, 0);
-            const totalUpData = gamesData.reduce((s, g) => s + g.uploaded, 0);
+            const downloading = gamesData.filter(g => g.state === 'downloading' || g.state === 'stalledDL');
+            const totalDl = downloading.reduce((s, g) => s + (g.dlSpeed || 0), 0);
+            const totalUp = gamesData.reduce((s, g) => s + (g.upSpeed || 0), 0);
+            const totalDlData = gamesData.reduce((s, g) => s + (g.downloaded || 0), 0);
+            const totalUpData = gamesData.reduce((s, g) => s + (g.uploaded || 0), 0);
             document.getElementById('dlSpeed').textContent = totalDl > 1000 ? (totalDl / 1000).toFixed(1) + 'M' : Math.round(
                 totalDl);
             document.getElementById('upSpeed').textContent = totalUp > 1000 ? (totalUp / 1000).toFixed(1) + 'M' : Math.round(
@@ -2473,14 +2373,12 @@
                     'uploading' || g.state === 'stalledUP');
             }
 
-            // If no items, show empty state, hide grid
             if (!list.length) {
                 grid.style.display = 'none';
                 empty.style.display = 'block';
                 return;
             }
 
-            // Otherwise show grid, hide empty
             grid.style.display = '';
             empty.style.display = 'none';
 
@@ -2500,7 +2398,7 @@
                     statusLabel = '⏸ Paused';
                     progressClass = 'fill-paused'; }
 
-                let speedText = isComplete ? `${g.upSpeed} KB/s ↑` : isPaused ? 'Paused' : `${g.dlSpeed} KB/s ↓`;
+                let speedText = isComplete ? `${g.upSpeed || 0} KB/s ↑` : isPaused ? 'Paused' : `${g.dlSpeed || 0} KB/s ↓`;
                 let etaText = g.eta && !isComplete && !isPaused ? g.eta : '';
 
                 let actions = '';
@@ -2574,44 +2472,16 @@
 
                 updateLibraryBadge(library.length);
             } catch (e) {
-                console.warn('Failed to fetch library, falling back to local data:', e);
-                // fallback to local gamesData
-                renderLibraryFallback();
-            }
-        }
-
-        function renderLibraryFallback() {
-            const data = window._gamesData || [];
-            const completed = data.filter(g => g.state === 'completed' || g.state === 'seeding' || g.state === 'uploading');
-            const grid = document.getElementById('libraryGrid');
-            if (!completed.length) {
+                console.warn('Failed to fetch library:', e);
                 grid.innerHTML = `
                     <div class="lib-empty">
-                        <i class="fas fa-gamepad"></i>
-                        <h3>Your Library is Empty</h3>
-                        <p>Download a game from the <span class="highlight" onclick="navTo(document.querySelector('.rb[data-panel=\\'downloads\\']'),'downloads')">Downloads</span> tab and it will appear here when complete.</p>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Could not load library</h3>
+                        <p>Make sure the backend is running.</p>
                     </div>
                 `;
                 updateLibraryBadge(0);
-                return;
             }
-            grid.innerHTML = completed.map(g => `
-                <div class="store-card" onclick="showToast('🎮 Launching ${g.name}...')">
-                    <div class="cover" style="background:linear-gradient(135deg,#1a1a2e,#16213e);background-image:url('${g.img || 'https://picsum.photos/seed/'+g.name.replace(/\\s+/g,'-').toLowerCase()+'/400/225.jpg'}');background-size:cover;background-position:center;">
-                        <div class="overlay"><button>▶ Play</button></div>
-                        <span class="badge" style="background:rgba(74,222,128,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.15);">✓ Ready</span>
-                        <div style="position:absolute;bottom:10px;right:12px;font-size:9px;color:rgba(255,255,255,0.3);">${g.size} GB</div>
-                    </div>
-                    <div class="info">
-                        <h4>${g.name}</h4>
-                        <div class="price" style="font-size:10px;color:rgba(255,255,255,0.2);display:flex;justify-content:space-between;align-items:center;">
-                            <span>Ready to play</span>
-                            <span style="color:rgba(74,222,128,0.4);font-size:9px;"><i class="fas fa-check-circle"></i> Downloaded</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            updateLibraryBadge(completed.length);
         }
 
         function updateLibraryBadge(count) {
@@ -2685,22 +2555,21 @@
                     });
                     const data = await res.json();
                     if (data.error) {
-                        showToast(data.error, 'fa-exclamation-triangle');
+                        showToast(data.error);
                     } else {
-                        showToast(`"${name}" removed from library`, 'fa-check');
+                        showToast(`"${name}" removed from library`);
                         await loadTorrents();
-                        renderLibrary();  // refresh library
+                        renderLibrary();
                     }
                 } catch (e) {
-                    showToast('Failed to remove: ' + e.message, 'fa-exclamation-triangle');
+                    showToast('Failed to remove: ' + e.message);
                 }
             } else {
                 gamesData = gamesData.filter(x => x.hash !== hash);
-                window._gamesData = gamesData;
                 updateStats();
                 renderDownloads();
                 renderLibrary();
-                showToast(`"${name}" removed from library`, 'fa-check');
+                showToast(`"${name}" removed from library`);
             }
 
             if (targetBtn) {
@@ -2713,16 +2582,16 @@
         async function addTorrent() {
             const input = document.getElementById('magnetInput');
             const raw = input.value.trim();
-            if (!raw) { showToast('Please enter a product key or magnet link', 'fa-exclamation-circle'); return; }
+            if (!raw) { showToast('Please enter a product key or magnet link'); return; }
 
             let magnet = raw;
 
             const matched = productList_Key.find(p => p.product.toLowerCase() === raw.toLowerCase());
             if (matched) {
                 magnet = matched.magnet;
-                showToast(`🔍 Found product: ${matched.product}`, 'fa-check');
+                showToast(`🔍 Found product: ${matched.product}`);
             } else if (!raw.startsWith('magnet:')) {
-                showToast('❌ Unknown product. Type a valid game name or paste a magnet link.', 'fa-exclamation-triangle');
+                showToast('❌ Unknown product. Type a valid game name or paste a magnet link.');
                 return;
             }
 
@@ -2734,42 +2603,15 @@
                     const res = await fetch('/api/add', { method: 'POST', headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ magnet }) });
                     const data = await res.json();
-                    if (data.error) { showToast(data.error, 'fa-exclamation-triangle'); } else { input.value = '';
+                    if (data.error) { showToast(data.error); } else { input.value = '';
                         await loadTorrents();
-                        showToast('Game added to downloads!', 'fa-check'); }
-                } catch (e) { showToast('Failed to add: ' + e.message, 'fa-exclamation-triangle'); } finally {
+                        showToast('Game added to downloads!'); }
+                } catch (e) { showToast('Failed to add: ' + e.message); } finally {
                     btn.innerHTML = '<i class="fas fa-download"></i> Download';
                     btn.disabled = false;
                 }
             } else {
-                const name = matched ? matched.product : (raw.startsWith('magnet:') ? 'Unknown Game' : raw);
-                const hash = 'demo-' + Date.now();
-                const newGame = {
-                    hash,
-                    name: name,
-                    genre: detectGenre(name),
-                    size: +(Math.random() * 80 + 10).toFixed(1),
-                    img: getGameImage(name),
-                    state: 'downloading',
-                    progress: 0,
-                    dlSpeed: Math.floor(Math.random() * 12000 + 2000),
-                    upSpeed: Math.floor(Math.random() * 1500 + 200),
-                    ratio: 0,
-                    seeds: Math.floor(Math.random() * 500 + 50),
-                    leechs: Math.floor(Math.random() * 80 + 10),
-                    downloaded: 0,
-                    uploaded: 0,
-                    savePath: 'D:/Games/' + name.replace(/\s+/g, ''),
-                    addedOn: new Date().toISOString().split('T')[0],
-                    eta: 'Calculating...'
-                };
-                gamesData.unshift(newGame);
-                window._gamesData = gamesData;
-                updateStats();
-                renderDownloads();
-                renderLibrary();
-                showToast(`Started downloading ${name}`, 'fa-download');
-                input.value = '';
+                showToast('Cannot add: qBittorrent not connected. Click Connect first.');
             }
         }
 
@@ -2783,10 +2625,9 @@
                     g.state = 'paused';
                     g.dlSpeed = 0;
                     g.eta = 'Paused';
-                    window._gamesData = gamesData;
                     updateStats();
                     renderDownloads();
-                    showToast(`${g.name} paused`, 'fa-pause');
+                    showToast(`${g.name} paused`);
                 }
             }
         }
@@ -2801,10 +2642,9 @@
                     g.state = 'downloading';
                     g.dlSpeed = Math.floor(Math.random() * 10000 + 2000);
                     g.eta = 'Calculating...';
-                    window._gamesData = gamesData;
                     updateStats();
                     renderDownloads();
-                    showToast(`${g.name} resumed`, 'fa-play');
+                    showToast(`${g.name} resumed`);
                 }
             }
         }
@@ -2817,10 +2657,9 @@
                 gamesData.forEach(g => { if (g.state === 'downloading') { g.state = 'paused';
                         g.dlSpeed = 0;
                         g.eta = 'Paused'; } });
-                window._gamesData = gamesData;
                 updateStats();
                 renderDownloads();
-                showToast('All downloads paused', 'fa-pause');
+                showToast('All downloads paused');
             }
         }
 
@@ -2832,10 +2671,9 @@
                 gamesData.forEach(g => { if (g.state === 'paused') { g.state = 'downloading';
                         g.dlSpeed = Math.floor(Math.random() * 8000 + 2000);
                         g.eta = 'Calculating...'; } });
-                window._gamesData = gamesData;
                 updateStats();
                 renderDownloads();
-                showToast('All downloads resumed', 'fa-play');
+                showToast('All downloads resumed');
             }
         }
 
@@ -2854,18 +2692,21 @@
                 const data = await res.json();
                 if (data.connected) {
                     isConnected = true;
-                    clearInterval(demoTickTimer);
                     updateStatusUI(true);
                     refreshTimer = setInterval(refreshData, 1000);
                     refreshData();
-                    showToast('Connected to GameVault!', 'fa-plug');
+                    showToast('Connected to GameVault!');
+                } else {
+                    updateStatusUI(false);
                 }
-            } catch (e) { /* stay in demo mode */ }
+            } catch (e) {
+                updateStatusUI(false);
+            }
         }
 
         async function reconnect() {
             const card = document.getElementById('statusCard');
-            card.className = 'status-card demo';
+            card.style.borderLeftColor = '#fbbf24';
             document.getElementById('statusTitle').textContent = 'Connecting...';
             document.getElementById('statusMessage').textContent = 'Attempting to reach qBittorrent...';
             try {
@@ -2873,43 +2714,60 @@
                 const data = await res.json();
                 if (data.connected) {
                     isConnected = true;
-                    clearInterval(demoTickTimer);
                     updateStatusUI(true);
+                    if (refreshTimer) clearInterval(refreshTimer);
                     refreshTimer = setInterval(refreshData, 1000);
                     refreshData();
-                    showToast('Connected to qBittorrent!', 'fa-plug');
-                } else { stayDemo(); }
-            } catch (e) { stayDemo(); }
-        }
-
-        function stayDemo() {
-            isConnected = false;
-            const card = document.getElementById('statusCard');
-            card.className = 'status-card demo';
-            document.getElementById('statusTitle').textContent = 'Demo Mode Active';
-            document.getElementById('statusMessage').textContent = 'Showing sample games — connect to qBittorrent for real downloads';
-            showToast('qBittorrent not found — demo mode', 'fa-flask');
+                    showToast('Connected to qBittorrent!');
+                } else {
+                    updateStatusUI(false);
+                }
+            } catch (e) {
+                updateStatusUI(false);
+            }
         }
 
         function updateStatusUI(connected) {
             const card = document.getElementById('statusCard');
+            const title = document.getElementById('statusTitle');
+            const msg = document.getElementById('statusMessage');
+            const icon = card.querySelector('.status-icon');
+            const btn = card.querySelector('.btn--primary');
+
             if (connected) {
-                card.className = 'status-card connected';
-                document.getElementById('statusTitle').textContent = 'Connected to GameVault';
-                document.getElementById('statusMessage').textContent = 'Live sync active — managing real downloads';
+                card.style.borderLeftColor = '#4ade80';
+                title.textContent = 'Connected to GameVault';
+                msg.textContent = 'Live sync active — managing real downloads';
+                icon.innerHTML = '<i class="fas fa-plug"></i>';
+                icon.style.background = 'rgba(74,222,128,0.1)';
+                icon.style.color = '#4ade80';
+                btn.textContent = ' Connected';
+                btn.disabled = true;
+                btn.style.opacity = '0.6';
                 document.getElementById('addBtn').disabled = false;
             } else {
-                card.className = 'status-card disconnected';
-                document.getElementById('statusTitle').textContent = 'Connection Lost';
-                document.getElementById('statusMessage').textContent = 'Unable to reach qBittorrent Web UI';
+                card.style.borderLeftColor = '#f87171';
+                title.textContent = 'Disconnected';
+                msg.textContent = 'qBittorrent not reachable — click Connect to try again';
+                icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                icon.style.background = 'rgba(248,113,113,0.1)';
+                icon.style.color = '#f87171';
+                btn.textContent = ' Connect';
+                btn.disabled = false;
+                btn.style.opacity = '1';
                 document.getElementById('addBtn').disabled = true;
+                // Clear any stale data
+                gamesData = [];
+                updateStats();
+                renderDownloads();
+                renderLibrary();
             }
         }
 
         async function refreshData() {
             if (!isConnected) return;
             await Promise.all([loadStatus(), loadTorrents(), loadStats()]);
-            renderLibrary(); // also refresh library
+            renderLibrary();
         }
 
         async function loadStatus() {
@@ -2918,8 +2776,9 @@
                 const data = await res.json();
                 isConnected = data.connected;
                 updateStatusUI(data.connected);
-                document.getElementById('addBtn').disabled = !data.connected;
-            } catch (e) {}
+            } catch (e) {
+                updateStatusUI(false);
+            }
         }
 
         async function loadStats() {
@@ -2960,7 +2819,6 @@
                     addedOn: t.added_on,
                     eta: t.eta || '—'
                 }));
-                window._gamesData = gamesData;
                 updateStats();
                 renderDownloads();
                 renderLibrary();
@@ -2976,7 +2834,6 @@
             const hashValue = hash ? hash.substring(1) : '';
 
             if (hash === '#ProductKey') {
-                console.log('🔑 #ProductKey detected – showing product key input');
                 container.style.display = 'block';
                 const downloadsLink = document.querySelector('.mi[data-key="downloads"]');
                 if (downloadsLink && !downloadsLink.classList.contains('on')) {
@@ -2986,7 +2843,6 @@
             }
 
             if (hashValue.startsWith('magnet:')) {
-                console.log('🧲 Magnet link detected in hash');
                 container.style.display = 'block';
                 const input = document.getElementById('magnetInput');
                 if (input) {
@@ -3008,12 +2864,14 @@
         // ── INIT ──
         document.addEventListener('DOMContentLoaded', () => {
             renderStore();
-            initDemoMode();
             // Show home by default
             document.querySelectorAll('.cview').forEach(v => v.classList.add('hidden'));
             document.getElementById('c-home').classList.remove('hidden');
             document.getElementById('iwrap').style.display = '';
             document.getElementById('mainArea').style.display = 'none';
+
+            // Initial connection attempt
+            tryConnection();
 
             handleProductKeyHash();
 
@@ -3031,7 +2889,7 @@
             document.getElementById('ifLoad').classList.add('gone');
         });
 
-        console.log(' Nexus Launcher v2.0 — Persistent Library via JSON');
+        console.log(' Nexus Launcher v2.0 — No demo mode, real qBittorrent only');
     </script>
 
 </body>
