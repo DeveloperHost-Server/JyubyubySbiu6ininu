@@ -1628,7 +1628,7 @@
         #productKeyContainer {
             display: none;
         }
-        
+
         /* ── DOWNLOAD EMPTY STATE ── */
         #dl-empty {
             text-align: center;
@@ -1660,6 +1660,269 @@
         }
         #dl-empty .highlight:hover {
             text-decoration: underline;
+        }
+
+        /* ── LIBRARY CARDS (index.html style) ── */
+        .lib-card {
+            background: #0e0e16;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            cursor: pointer;
+        }
+        .lib-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 1px;
+            background: linear-gradient(135deg, transparent 40%, rgba(77, 166, 255, 0.15) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .lib-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(77, 166, 255, 0.06);
+            border-color: rgba(77, 166, 255, 0.12);
+            background: #14141e;
+        }
+        .lib-card:hover::before {
+            opacity: 1;
+        }
+
+        .lib-card .card-img-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 180px;
+            flex-shrink: 0;
+        }
+        .lib-card .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .lib-card:hover .card-img-wrapper img {
+            transform: scale(1.08);
+        }
+        .lib-card .card-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, #0e0e16 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .lib-card .card-content {
+            padding: 1.25rem 1.5rem 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+            margin-top: -20px;
+            background: transparent;
+        }
+
+        .lib-card .card-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(77, 166, 255, 0.12);
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #4da6ff;
+            margin-bottom: 0.6rem;
+            width: fit-content;
+            border: 1px solid rgba(77, 166, 255, 0.08);
+        }
+
+        .lib-card .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+
+        .lib-card .card-meta {
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.25rem;
+        }
+        .lib-card .card-meta .dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .lib-card .card-desc {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex-grow: 1;
+            margin-top: 2px;
+        }
+
+        .lib-card .card-footer {
+            margin-top: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .lib-card .card-footer .status-badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 12px;
+            border-radius: 20px;
+            background: rgba(74, 222, 128, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .lib-card .card-footer .status-badge i {
+            font-size: 0.6rem;
+        }
+
+        .lib-card .card-footer .btn-play {
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4da6ff, #2563eb);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 16px rgba(77, 166, 255, 0.2);
+        }
+        .lib-card .card-footer .btn-play:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 24px rgba(77, 166, 255, 0.35);
+        }
+
+        .lib-card .card-footer .btn-secondary-sm {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.35);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lib-card .card-footer .btn-secondary-sm:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        .lib-card .card-badge-top {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 3;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .lib-card .card-badge-top.ready {
+            background: rgba(74, 222, 128, 0.15);
+            border-color: rgba(74, 222, 128, 0.15);
+            color: #4ade80;
+        }
+
+        /* ── REVEAL ANIMATION ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 {
+            transition-delay: 0.05s;
+        }
+        .reveal-delay-2 {
+            transition-delay: 0.1s;
+        }
+        .reveal-delay-3 {
+            transition-delay: 0.15s;
+        }
+        .reveal-delay-4 {
+            transition-delay: 0.2s;
+        }
+
+        /* ── LIBRARY HEADER ── */
+        .lib-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .lib-header h2 {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff, rgba(255, 255, 255, 0.6));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .lib-header p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.25);
+        }
+        .lib-header .lib-count {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .lib-header .lib-count span {
+            color: #4da6ff;
         }
     </style>
 
@@ -1956,10 +2219,15 @@
                 <div id="storeGrid" class="game-grid"></div>
             </div>
 
-            <!-- ─── LIBRARY ─── -->
+            <!-- ─── LIBRARY ─── (UPDATED: index.html visual identity) -->
             <div id="c-library" class="cview hidden">
-                <h2 class="text-[22px] font-bold tracking-tight mb-1">Game Library</h2>
-                <p class="text-[13px] text-white/25 mb-6">Your completed downloads — ready to play</p>
+                <div class="lib-header">
+                    <div>
+                        <h2>Game Library</h2>
+                        <p>Your collection — ready to play</p>
+                    </div>
+                    <div class="lib-count" id="libCountDisplay"><span id="libCountNum">0</span> games</div>
+                </div>
                 <div id="libraryGrid" class="game-grid"></div>
             </div>
 
@@ -2017,7 +2285,7 @@
                 <div class="dl-grid" id="dlGrid">
                     <div class="loading" style="text-align:center;padding:30px;color:rgba(255,255,255,0.2);"><div class="spinner"></div><p>Loading downloads...</p></div>
                 </div>
-                
+
                 <!-- Empty State (hidden by default) -->
                 <div id="dl-empty" style="display:none;">
                     <i class="fas fa-download"></i>
@@ -2140,7 +2408,7 @@
             document.getElementById('iwrap').style.display = 'none';
             document.getElementById('mainArea').style.display = '';
             if (window.innerWidth < 1024) mobClose();
-            renderLibrary();  // calls API
+            renderLibrary();
         }
 
         function activateDownloads(el) {
@@ -2154,7 +2422,6 @@
             document.getElementById('iwrap').style.display = 'none';
             document.getElementById('mainArea').style.display = '';
             if (window.innerWidth < 1024) mobClose();
-            // Downloads view is self-contained
         }
 
         function activateQuick(el) {
@@ -2289,8 +2556,8 @@
             { product: "Titan Siege", magnet: "magnet:?xt=urn:btih:yza567&dn=Titan+Siege" },
             { product: "Pixel Warriors", magnet: "magnet:?xt=urn:btih:bcd890&dn=Pixel+Warriors" },
             { product: "Frost Empire", magnet: "magnet:?xt=urn:btih:efg123&dn=Frost+Empire" },
-            { product: "44gho-78st-93of-77tsus-64hima", magnet: "magnet:?xt=urn:btih:hij456&dn=Mecha+Strike+Force", Game_Name:"Ghost of Tsushima" },
-            { product: "893unch-675arted-4-a-456thiefs-893end", magnet: "magnet:?xt=urn:btih:hij456&dn=Mecha+Strike+Force", Game_Name:"UNCHARTED 4: A Thief’s End" },
+            { product: "44gho-78st-93of-77tsus-64hima", magnet: "magnet:?xt=urn:btih:hij456&dn=Mecha+Strike+Force", Game_Name: "Ghost of Tsushima" },
+            { product: "893unch-675arted-4-a-456thiefs-893end", magnet: "magnet:?xt=urn:btih:hij456&dn=Mecha+Strike+Force", Game_Name: "UNCHARTED 4: A Thief’s End" },
         ];
 
         document.getElementById('productCount').textContent = productList_Key.length;
@@ -2360,17 +2627,17 @@
         function renderDownloads() {
             const grid = document.getElementById('dlGrid');
             const empty = document.getElementById('dl-empty');
-            
+
             let list = gamesData;
             if (currentFilter !== 'all') {
                 if (currentFilter === 'completed') list = list.filter(g => g.state === 'completed' || g.state === 'uploading' ||
-                    g.state === 'seeding' || g.state === 'stalledUP');
+                        g.state === 'seeding' || g.state === 'stalledUP');
                 else if (currentFilter === 'downloading') list = list.filter(g => g.state === 'downloading' || g.state ===
-                    'stalledDL' || g.state === 'metaDL' || g.state === 'forcedDL');
+                        'stalledDL' || g.state === 'metaDL' || g.state === 'forcedDL');
                 else if (currentFilter === 'paused') list = list.filter(g => g.state === 'paused' || g.state === 'pausedDL' ||
-                    g.state === 'pausedUP');
+                        g.state === 'pausedUP');
                 else if (currentFilter === 'seeding') list = list.filter(g => g.state === 'seeding' || g.state ===
-                    'uploading' || g.state === 'stalledUP');
+                        'uploading' || g.state === 'stalledUP');
             }
 
             if (!list.length) {
@@ -2413,7 +2680,7 @@
                         `<button class="pause-btn" onclick="pauseTorrent('${g.hash}')"><i class="fas fa-pause"></i> Pause</button>`;
                 }
                 actions +=
-                ` <button class="remove-btn" onclick="confirmRemoveTorrent('${g.hash}','${g.name}')"><i class="fas fa-trash"></i></button>`;
+                    ` <button class="remove-btn" onclick="confirmRemoveTorrent('${g.hash}','${g.name}')"><i class="fas fa-trash"></i></button>`;
 
                 return `
                 <div class="dl-item">
@@ -2433,13 +2700,18 @@
             }).join('');
         }
 
-        // ── Render Library (API-based) ──
+        // ── Render Library (UPDATED: index.html visual identity) ──
         async function renderLibrary() {
             const grid = document.getElementById('libraryGrid');
+            const countEl = document.getElementById('libCountNum');
+
             try {
                 const res = await fetch('/api/library');
                 const data = await res.json();
                 const library = data.library || [];
+
+                // Update count
+                if (countEl) countEl.textContent = library.length;
 
                 if (!library.length) {
                     grid.innerHTML = `
@@ -2453,24 +2725,48 @@
                     return;
                 }
 
-                grid.innerHTML = library.map(g => `
-                    <div class="store-card" onclick="showToast('🎮 Launching ${g.name}...')">
-                        <div class="cover" style="background:linear-gradient(135deg,#1a1a2e,#16213e);background-image:url('${g.img || 'https://picsum.photos/seed/'+g.name.replace(/\\s+/g,'-').toLowerCase()+'/400/225.jpg'}');background-size:cover;background-position:center;">
-                            <div class="overlay"><button>▶ Play</button></div>
-                            <span class="badge" style="background:rgba(74,222,128,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.15);">✓ Ready</span>
-                            <div style="position:absolute;bottom:10px;right:12px;font-size:9px;color:rgba(255,255,255,0.3);">${g.size || '?'} GB</div>
-                        </div>
-                        <div class="info">
-                            <h4>${g.name}</h4>
-                            <div class="price" style="font-size:10px;color:rgba(255,255,255,0.2);display:flex;justify-content:space-between;align-items:center;">
-                                <span>Ready to play</span>
-                                <span style="color:rgba(74,222,128,0.4);font-size:9px;"><i class="fas fa-check-circle"></i> Downloaded</span>
+                // Build cards using the index.html card style
+                grid.innerHTML = library.map((g, idx) => {
+                    const delayClass = `reveal-delay-${(idx % 4) + 1}`;
+                    const imgUrl = g.img || getGameImage(g.name);
+                    const genre = g.genre || detectGenre(g.name);
+                    const size = g.size || '?';
+
+                    return `
+                        <div class="lib-card reveal ${delayClass}" onclick="showToast('🎮 Launching ${g.name}...')">
+                            <div class="card-img-wrapper">
+                                <img src="${imgUrl}" alt="${g.name}" loading="lazy">
+                                <div class="card-img-overlay"></div>
+                                <span class="card-badge-top ready"><i class="fas fa-check-circle" style="font-size:0.5rem;margin-right:4px;"></i> Ready</span>
+                            </div>
+                            <div class="card-content">
+                                <span class="card-tag">${genre}</span>
+                                <h3 class="card-title">${g.name}</h3>
+                                <div class="card-meta">
+                                    <span>${size} GB</span>
+                                    <span class="dot"></span>
+                                    <span>Installed</span>
+                                </div>
+                                <div class="card-footer">
+                                    <span class="status-badge"><i class="fas fa-check-circle"></i> Ready to play</span>
+                                    <button class="btn-play" onclick="event.stopPropagation();showToast('Launching ${g.name}...')">
+                                        <i class="fas fa-play" style="font-size:0.6rem;"></i> Play
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
+
+                // Trigger reveal animation after render
+                requestAnimationFrame(() => {
+                    grid.querySelectorAll('.lib-card.reveal').forEach((el, i) => {
+                        setTimeout(() => el.classList.add('visible'), 50 + i * 40);
+                    });
+                });
 
                 updateLibraryBadge(library.length);
+
             } catch (e) {
                 console.warn('Failed to fetch library:', e);
                 grid.innerHTML = `
@@ -2487,6 +2783,8 @@
         function updateLibraryBadge(count) {
             const badgePanel = document.getElementById('libBadgePanel');
             const badgeRail = document.getElementById('libBadgeRail');
+            const countNum = document.getElementById('libCountNum');
+            if (countNum) countNum.textContent = count;
             if (count > 0) {
                 badgePanel.style.display = '';
                 badgePanel.textContent = count;
@@ -2756,7 +3054,6 @@
                 btn.disabled = false;
                 btn.style.opacity = '1';
                 document.getElementById('addBtn').disabled = true;
-                // Clear any stale data
                 gamesData = [];
                 updateStats();
                 renderDownloads();
@@ -2889,7 +3186,7 @@
             document.getElementById('ifLoad').classList.add('gone');
         });
 
-        console.log(' Nexus Launcher v2.0 — No demo mode, real qBittorrent only');
+        console.log(' Nexus Launcher v2.0 — Library now follows index.html visual identity');
     </script>
 
 </body>
