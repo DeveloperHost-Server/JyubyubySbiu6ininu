@@ -1929,6 +1929,32 @@
 </head>
 
 <body id="bodyMain1">
+<script>
+    // --- Insert toolbar BEFORE the rail (which is above the panel) ---
+  const rail = document.querySelector('.rail');
+  if (rail) {
+    rail.parentNode.insertBefore(toolbar, rail);
+    console.log('✅ Toolbar placed above .rail');
+  } else {
+    // Fallback: prepend to body
+    document.body.prepend(toolbar);
+    console.warn('⚠️ .rail not found – toolbar prepended to body');
+  }
+
+  // Animate in
+  requestAnimationFrame(() => {
+    toolbar.style.opacity = '1';
+    toolbar.style.transform = 'translateY(0)';
+  });
+
+  // Add body padding to avoid content being hidden behind the toolbar
+  const style = document.createElement('style');
+  style.id = 'gv-toolbar-style';
+  style.textContent = `body { padding-top: 56px !important; }`;
+  document.head.appendChild(style);
+
+})();
+</script>
 
     <!-- ===== LOADING SCREEN ===== -->
     <div id="loader">
