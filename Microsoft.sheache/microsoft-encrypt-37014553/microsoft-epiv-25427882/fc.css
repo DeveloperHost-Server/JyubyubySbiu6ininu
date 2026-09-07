@@ -1,3 +1,8 @@
-#root {
-    background-color: black;
+button {
+    
+                    position: fixed; top: 16px; right: 16px;
+                    background: #ff3355; color: white; border: none;
+                    padding: 10px 20px; border-radius: 30px;
+                    font-weight: bold; cursor: pointer; z-index: 9999;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
