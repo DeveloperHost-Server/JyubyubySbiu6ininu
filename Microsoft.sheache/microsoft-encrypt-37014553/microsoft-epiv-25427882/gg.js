@@ -1,3 +1,2 @@
-const style = document.createElement('style');
-style.textContent = 'ytd-masthead { display: none !important; }';
-document.head.appendChild(style);
+alert('🎉 GameVault test script loaded successfully!');
+console.log('Test script executed.');
