@@ -5,3 +5,8 @@ ytd-masthead {
   visibility: hidden !important;
   pointer-events: none !important;
 }
+
+
+div#main {
+    background-color: #00e5e3 !important;
+}
