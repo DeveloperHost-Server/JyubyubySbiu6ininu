@@ -32,22 +32,22 @@
 
 //-------------------------------------ToolBar----------------------------------------
 
-(function() {
+(function() {{
         if (window.__gvToolbarInjected) return;
         window.__gvToolbarInjected = true;
 
         // --- Keyboard shortcuts ---
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function(e) {{
             var tag = document.activeElement.tagName;
             if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-            if (e.ctrlKey && e.key === 'z') {
+            if (e.ctrlKey && e.key === 'z') {{
                 e.preventDefault();
                 window.history.back();
-            } else if (e.ctrlKey && e.key === 'u') {
+            }} else if (e.ctrlKey && e.key === 'u') {{
                 e.preventDefault();
                 window.history.forward();
             }
-        });
+        }});
 
         // --- Create the toolbar ---
         var toolbar = document.createElement('div');
@@ -75,42 +75,42 @@
         var closeIcon = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
 
         toolbar.innerHTML = `
-            <button id="gv-back" class="gv-btn" style="background:rgba(255,255,255,0.05);border:none;color:#e0e0e0;cursor:pointer;padding:6px 12px;border-radius:30px;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s,color 0.2s;margin-right:4px;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='#fff';this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='#e0e0e0';this.style.transform='scale(1)'">${backIcon}</button>
-            <button id="gv-forward" class="gv-btn" style="background:rgba(255,255,255,0.05);border:none;color:#e0e0e0;cursor:pointer;padding:6px 12px;border-radius:30px;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s,color 0.2s;margin-right:8px;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='#fff';this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='#e0e0e0';this.style.transform='scale(1)'">${forwardIcon}</button>
+            <button id="gv-back" class="gv-btn" style="background:rgba(255,255,255,0.05);border:none;color:#e0e0e0;cursor:pointer;padding:6px 12px;border-radius:30px;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s,color 0.2s;margin-right:4px;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='#fff';this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='#e0e0e0';this.style.transform='scale(1)'">${{backIcon}}</button>
+            <button id="gv-forward" class="gv-btn" style="background:rgba(255,255,255,0.05);border:none;color:#e0e0e0;cursor:pointer;padding:6px 12px;border-radius:30px;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s,color 0.2s;margin-right:8px;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='#fff';this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='#e0e0e0';this.style.transform='scale(1)'">${{forwardIcon}}</button>
             <div style="width:1px;height:28px;background:rgba(255,255,255,0.15);margin-right:8px;"></div>
-            <button id="gv-home" class="gv-btn" style="background:rgba(255,255,255,0.05);border:none;color:#e0e0e0;cursor:pointer;padding:6px 12px;border-radius:30px;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s,color 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='#fff';this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='#e0e0e0';this.style.transform='scale(1)'">${homeIcon}</button>
+            <button id="gv-home" class="gv-btn" style="background:rgba(255,255,255,0.05);border:none;color:#e0e0e0;cursor:pointer;padding:6px 12px;border-radius:30px;display:flex;align-items:center;justify-content:center;transition:background 0.2s,transform 0.2s,color 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)';this.style.color='#fff';this.style.transform='scale(1.05)'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='#e0e0e0';this.style.transform='scale(1)'">${{homeIcon}}</button>
             <div style="flex:1;"></div>
             <button id="gv-close-toolbar" style="background:transparent;border:none;color:#888;font-size:14px;cursor:pointer;padding:4px 12px;border-radius:30px;display:flex;align-items:center;gap:6px;transition:background 0.2s,color 0.2s;font-family:inherit;" onmouseover="this.style.background='rgba(255,255,255,0.1)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#888'">
-                ${closeIcon} Close
+                ${{closeIcon}} Close
             </button>
         `;
 
         document.body.prepend(toolbar);
 
         // Event listeners
-        document.getElementById('gv-back').addEventListener('click', function() { window.history.back(); });
-        document.getElementById('gv-forward').addEventListener('click', function() { window.history.forward(); });
-        document.getElementById('gv-home').addEventListener('click', function() {
+        document.getElementById('gv-back').addEventListener('click', function() {{ window.history.back(); }});
+        document.getElementById('gv-forward').addEventListener('click', function() {{ window.history.forward(); }});
+        document.getElementById('gv-home').addEventListener('click', function() {{
             window.location.href = '$FLASK_ORIGIN$';
-        });
+        }});
 
-        document.getElementById('gv-close-toolbar').addEventListener('click', function() {
+        document.getElementById('gv-close-toolbar').addEventListener('click', function() {{
             toolbar.style.opacity = '0';
-            setTimeout(function() {
+            setTimeout(function() {{
                 toolbar.remove();
                 var styleEl = document.getElementById('gv-toolbar-style');
                 if (styleEl) styleEl.remove();
-            }, 300);
-        });
+            }}, 300);
+        }});
 
         // Push page content below the toolbar
         var bodyStyle = document.createElement('style');
         bodyStyle.id = 'gv-toolbar-style';
-        bodyStyle.textContent = 'body { padding-top: 56px !important; }';
+        bodyStyle.textContent = 'body {{ padding-top: 56px !important; }}';
         document.head.appendChild(bodyStyle);
 
         console.log('[GameVault] Toolbar injected on external page');
-    })();
+}})();
 
 
 //-----------------------------------------------------------------------------
