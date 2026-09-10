@@ -46,7 +46,7 @@
             }} else if (e.ctrlKey && e.key === 'u') {{
                 e.preventDefault();
                 window.history.forward();
-            }
+            }}
         }});
 
         // --- Create the toolbar ---
