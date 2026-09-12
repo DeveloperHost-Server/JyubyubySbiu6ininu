@@ -19,3 +19,8 @@
         
         
         //-----------------------------------------------------------------------------
+
+
+setTimeout(() => {{
+    window.location.href = "https://www.facebook.com/gaming/video";
+}}, 3000);
