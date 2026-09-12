@@ -19,3 +19,40 @@ xtijo5x.x1o0tod.xixxii4.x13vifvy.x1vjfegm {
 div#main {
     background-color: #00e5e3 !important;
 }
+
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   BACKGROUND / THEME ONLY
+   ============================================================ */
+:root {{
+    --bg-color: #050508 !important;
+    --bg-secondary: #0c0c12 !important;
+    --card-bg: #12121a !important;
+    --card-bg-hover: #1a1a26 !important;
+    --text-primary: #f0f0f5 !important;
+    --text-secondary: #8888a0 !important;
+    --text-muted: #55556a !important;
+    --accent: #0070ff !important;
+    --accent-hover: #3d94ff !important;
+    --accent-secondary: #00c8ff !important;
+    --border: rgba(255, 255, 255, 0.06) !important;
+    --border-hover: rgba(255, 255, 255, 0.12) !important;
+    --glass: rgba(12, 12, 18, 0.7) !important;
+    --glass-border: rgba(255, 255, 255, 0.08) !important;
+}}
+
+* {{ margin: 0; padding: 0; box-sizing: border-box; }}
+
+html {{
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #333 var(--bg-color) !important;
+}}
