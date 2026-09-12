@@ -7,7 +7,7 @@
         // AUTO-LOAD: This runs immediately when page loads
         function autoLoad() {{
             // Find the container and insert HTML
-            const container = document.getElementById('global_header');
+            const container = document.getElementById('root');
             container.innerHTML = myComponent;
 
             // Console log to confirm loading
