@@ -1,53 +1,121 @@
+:root {
+            --bg-color: #050508;
+            --bg-secondary: #0c0c12;
+            --card-bg: #12121a;
+            --card-bg-hover: #1a1a26;
+            --text-primary: #f0f0f5;
+            --text-secondary: #8888a0;
+            --text-muted: #55556a;
+            --accent: #0070ff;
+            --accent-hover: #3d94ff;
+            --accent-secondary: #00c8ff;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --glass: rgba(12, 12, 18, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: #333 var(--bg-color);
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* ====================== AMBIENT BACKGROUND ====================== */
+        .ambient-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+
+        .ambient-orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(120px); opacity: 0.15;
+            animation: orbFloat 20s ease-in-out infinite;
+        }
+
+        .ambient-orb:nth-child(1) { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -100px; }
+        .ambient-orb:nth-child(2) { width: 500px; height: 500px; background: #6b00ff; top: 50%; right: -150px; animation-delay: -7s; animation-duration: 25s; }
+        .ambient-orb:nth-child(3) { width: 400px; height: 400px; background: var(--accent-secondary); bottom: -100px; left: 30%; animation-delay: -14s; animation-duration: 22s; }
+
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -30px) scale(1.1); }
+            50% { transform: translate(-20px, 40px) scale(0.95); }
+            75% { transform: translate(30px, 20px) scale(1.05); }
+        }
+
+        /* ====================== NOISE / FILM GRAIN ====================== */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1; pointer-events: none; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+
+        /* ====================== CURSOR GLOW ====================== */
+        .cursor-glow {
+            position: fixed; width: 300px; height: 300px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,112,255,0.06) 0%, transparent 70%);
+            pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            transition: opacity 0.3s; opacity: 0;
+        }
+
+        body:hover .cursor-glow { opacity: 1; }
+
+        /* ====================== CONTENT LAYER ====================== */
+        main {
+            position: relative; z-index: 2;
+            max-width: 1440px; margin: 0 auto; padding: 2rem 5%;
+        }
+
+        @media (max-width: 900px) {
+            .ambient-orb { filter: blur(80px); }
+        }
 
 
-_ytd-item-section-renderer {{
-    background-color: #4efff5 !important;
-    }}
 
-/* ============================================================ */
 
-ytd-item-section-renderer {
-    position: relative !important;
-    isolation: isolate !important;
-    overflow: hidden !important;
-    background: transparent !important;   /* CRITICAL: don't paint over the pseudo */
-}
 
-ytd-item-section-renderer::before {
-    content: '' !important;
-    position: absolute !important;
-    inset: 0 !important;
-    z-index: 0 !important;               /* 0, not -1 — sits above parent bg, below children */
-    pointer-events: none !important;
 
-    background-color: #050508;
-    background-image:
-        /* film grain */
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-        /* orb 1 – blue */
-        radial-gradient(circle 480px at 12% 12%, rgba(0,112,255,0.35), transparent 70%),
-        /* orb 2 – purple */
-        radial-gradient(circle 420px at 88% 55%, rgba(107,0,255,0.35), transparent 70%),
-        /* orb 3 – cyan */
-        radial-gradient(circle 380px at 35% 92%, rgba(0,200,255,0.35), transparent 70%);
-    background-repeat: repeat, no-repeat, no-repeat, no-repeat;
-    background-size: 180px 180px, auto, auto, auto;
 
-    opacity: 0.9;
-    animation: ytdDrift 26s ease-in-out infinite;
-}
 
-/* Force all direct children above the ::before */
-ytd-item-section-renderer > * {
-    position: relative !important;
-    z-index: 1 !important;
-}
 
-@keyframes ytdDrift {
-    0%, 100% { background-position: 0 0, 12% 12%, 88% 55%, 35% 92%; }
-    33%      { background-position: 0 0, 18% 8%,  80% 60%, 42% 85%; }
-    66%      { background-position: 0 0, 8% 18%,  92% 48%, 28% 96%; }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
