@@ -179,18 +179,6 @@ body::after {
     opacity: .8;
 }
 
-/* ── keyframes ───────────────────────────────────────────────── */
-@keyframes bgOrbDrift {
-    0%   { background-position:   0%   0%, 100%  10%,  45% 100%,  0 0; }
-    33%  { background-position:  18%  22%,  82%  28%,  30%  80%,  0 0; }
-    66%  { background-position:  -6%  12%, 108%  -4%,  60%  92%,  0 0; }
-    100% { background-position:   0%   0%, 100%  10%,  45% 100%,  0 0; }
-}
-
-/* ── reduced motion ──────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-    body::before { animation: none; }
-}
 
 
 
