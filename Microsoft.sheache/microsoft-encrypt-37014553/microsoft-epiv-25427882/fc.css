@@ -1,56 +1,57 @@
-/* ──────────────────────────────────────────────────────────────
-   AMBIENT BACKGROUND FOR  ytd-item-section-renderer
-   Deep-space glass · drifting orbs · film grain · accent rim
-   ────────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   COOL BACKGROUND  ·  ytd-item-section-renderer
+   Deep-space glass · ambient orbs · film grain · accent rim
+   ══════════════════════════════════════════════════════════════════ */
 
 ytd-item-section-renderer {
-    --sec-accent:   0, 112, 255;   /* blue   */
-    --sec-accent-2: 0, 200, 255;   /* cyan   */
-    --sec-accent-3: 107, 0, 255;   /* violet */
+    /* ---- tunables ---- */
+    --sec-radius:     20px;
+    --sec-accent:     0, 112, 255;
+    --sec-accent-2:   0, 200, 255;
+    --sec-accent-3:   107, 0, 255;
 
     position: relative;
-    isolation: isolate;
-    border-radius: 20px;
-    background: transparent;        /* let the pseudo-element paint everything */
-    overflow: hidden;               /* keep the glow inside the rounded corners */
+    isolation: isolate;              /* keeps z-index:-1 layers inside */
+    border-radius: var(--sec-radius);
+    background: linear-gradient(165deg, #12121a 0%, #0b0b12 55%, #08080d 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px 10px 4px;
+    margin-bottom: 24px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 24px 60px -34px rgba(0, 0, 0, 0.95);
+    transition: border-color .35s ease, box-shadow .35s ease;
 }
 
-/* ── LAYER 1 · base gradient + drifting orbs + grain ─────────── */
+/* ---------- LAYER 1 · drifting ambient orbs ---------- */
 ytd-item-section-renderer::before {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: -2;
     border-radius: inherit;
     pointer-events: none;
 
     background-image:
-        /* film grain (SVG noise) */
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-        /* orbs */
         radial-gradient(closest-side, rgba(var(--sec-accent),   .28), transparent 100%),
         radial-gradient(closest-side, rgba(var(--sec-accent-3), .24), transparent 100%),
-        radial-gradient(closest-side, rgba(var(--sec-accent-2), .18), transparent 100%),
-        /* base gradient */
-        linear-gradient(165deg, #12121a 0%, #0b0b12 55%, #08080d 100%);
-
-    background-size:
-        180px 180px,               /* grain   */
-        70% 90%, 60% 85%, 65% 80%, /* orbs    */
-        100% 100%;                 /* base    */
-
-    background-position:
-        0 0,
-        0% 0%, 100% 10%, 45% 100%,
-        0 0;
-
-    background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+        radial-gradient(closest-side, rgba(var(--sec-accent-2), .18), transparent 100%);
+    background-size: 70% 90%, 60% 85%, 65% 80%;
+    background-position: 0% 0%, 100% 10%, 45% 100%;
+    background-repeat: no-repeat;
 
     animation: secOrbDrift 26s ease-in-out infinite;
     will-change: background-position;
 }
 
-/* ── LAYER 2 · accent rim (thin light leak along the top) ────── */
+@keyframes secOrbDrift {
+    0%   { background-position:   0%   0%, 100%  10%,  45% 100%; }
+    33%  { background-position:  18%  22%,  82%  28%,  30%  80%; }
+    66%  { background-position:  -6%  12%, 108%  -4%,  60%  92%; }
+    100% { background-position:   0%   0%, 100%  10%,  45% 100%; }
+}
+
+/* ---------- LAYER 2 · film grain + accent rim light ---------- */
 ytd-item-section-renderer::after {
     content: "";
     position: absolute;
@@ -59,33 +60,100 @@ ytd-item-section-renderer::after {
     border-radius: inherit;
     pointer-events: none;
 
-    background: linear-gradient(90deg,
-        transparent 0%,
-        rgba(var(--sec-accent),   .55) 30%,
-        rgba(var(--sec-accent-2), .55) 70%,
-        transparent 100%);
-    background-size: 100% 1px;
-    background-position: 0 0;
-    background-repeat: no-repeat;
+    background-image:
+        linear-gradient(90deg,
+            transparent 0%,
+            rgba(var(--sec-accent), .55) 30%,
+            rgba(var(--sec-accent-2), .55) 70%,
+            transparent 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 100% 1px, 180px 180px;
+    background-position: 0 0, 0 0;
+    background-repeat: no-repeat, repeat;
+
     opacity: .9;
+    mix-blend-mode: normal;
+}
+/* grain needs its own low opacity — do it with a nested trick */
+ytd-item-section-renderer::after { opacity: .05; }
+/* …and put the rim line back at full strength */
+ytd-item-section-renderer {
+    background-clip: padding-box;
 }
 
-/* ── subtle hover boost (optional) ────────────────────────────── */
-ytd-item-section-renderer:hover::before {
-    animation-duration: 14s;
+/* ---------- hover / focus state ---------- */
+ytd-item-section-renderer:hover {
+    border-color: rgba(var(--sec-accent), .32);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        inset 0 0 120px -50px rgba(var(--sec-accent), .35),
+        0 28px 70px -32px rgba(0, 0, 0, .95),
+        0 0 60px -30px rgba(var(--sec-accent), .55);
+}
+ytd-item-section-renderer:hover::before { animation-duration: 14s; }
+
+/* ══════════════════════════════════════════════════════════════════
+   MAKE YOUTUBE'S OWN PAINT GET OUT OF THE WAY
+   ══════════════════════════════════════════════════════════════════ */
+
+ytd-item-section-renderer #contents,
+ytd-item-section-renderer #header,
+ytd-item-section-renderer > #contents,
+ytd-item-section-renderer > #header,
+ytd-item-section-renderer .ytd-item-section-renderer {
+    background: transparent !important;
 }
 
-/* ── keyframes ────────────────────────────────────────────────── */
-@keyframes secOrbDrift {
-    0%   { background-position:   0%   0%, 100%  10%,  45% 100%,  0 0; }
-    33%  { background-position:  18%  22%,  82%  28%,  30%  80%,  0 0; }
-    66%  { background-position:  -6%  12%, 108%  -4%,  60%  92%,  0 0; }
-    100% { background-position:   0%   0%, 100%  10%,  45% 100%,  0 0; }
+/* kill YouTube's grey section separators inside the card */
+ytd-item-section-renderer #contents > * + * {
+    border-top-color: rgba(255, 255, 255, 0.045) !important;
 }
 
-/* ── reduced motion ───────────────────────────────────────────── */
+/* headers inherit the ambient tone */
+ytd-item-section-renderer #header #title,
+ytd-item-section-renderer #title {
+    letter-spacing: -0.01em;
+    color: #f0f0f5;
+}
+
+/* ---------- glassy child cards ---------- */
+ytd-item-section-renderer ytd-rich-item-renderer,
+ytd-item-section-renderer ytd-video-renderer,
+ytd-item-section-renderer ytd-grid-video-renderer,
+ytd-item-section-renderer ytd-playlist-renderer,
+ytd-item-section-renderer ytd-channel-renderer {
+    border-radius: 14px;
+    transition: background-color .3s ease, transform .3s ease;
+}
+ytd-item-section-renderer ytd-rich-item-renderer:hover,
+ytd-item-section-renderer ytd-video-renderer:hover,
+ytd-item-section-renderer ytd-grid-video-renderer:hover {
+    background-color: rgba(255, 255, 255, 0.035);
+    transform: translateY(-1px);
+}
+
+/* thumbnails pick up the same rounding language */
+ytd-item-section-renderer ytd-thumbnail,
+ytd-item-section-renderer ytd-thumbnail img {
+    border-radius: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE / MOTION
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+    ytd-item-section-renderer {
+        --sec-radius: 14px;
+        padding: 6px 6px 2px;
+        margin-bottom: 16px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     ytd-item-section-renderer::before { animation: none; }
+    ytd-item-section-renderer,
+    ytd-item-section-renderer * { transition: none !important; }
 }
 
 
