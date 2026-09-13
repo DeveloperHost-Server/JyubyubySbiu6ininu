@@ -4,9 +4,25 @@ _ytd-item-section-renderer {{
     background-color: #4efff5 !important;
     }}
 
+/* ============================================================ */
 
-
-
+ytd-item-section-renderer {
+    position: relative !important;
+    background: transparent !important;
+}
+ytd-item-section-renderer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle 500px at 20% 20%, #0070ff, transparent 70%),
+                #050508;
+}
+ytd-item-section-renderer > * {
+    position: relative;
+    z-index: 1;
+}
 
 
 
