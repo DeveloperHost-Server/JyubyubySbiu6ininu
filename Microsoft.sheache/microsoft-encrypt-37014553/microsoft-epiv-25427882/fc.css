@@ -162,7 +162,15 @@ ytd-item-section-renderer ytd-thumbnail img {
 
 
 
-
+yt-formatted-string.ytd-game-details-renderer {
+   
+    color: var(--color-white) !important;
+    font-family: Roboto, "Arial", sans-serif;
+    font-size: 2.0rem !important;
+    line-height: 3rem;
+    font-weight: 600;
+    
+}
 
 
 
