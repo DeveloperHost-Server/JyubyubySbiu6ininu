@@ -107,6 +107,101 @@ ytd-item-section-renderer:hover::before {
 
 
 
+/* ====================================================================================================================================================================== */
+
+
+
+/* ══════════════════════════════════════════════════════════════
+   AMBIENT PAGE BACKGROUND
+   drifting orbs · film grain · accent rim · fixed full-screen
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+    --bg-accent:   0, 112, 255;   /* blue   */
+    --bg-accent-2: 0, 200, 255;   /* cyan   */
+    --bg-accent-3: 107, 0, 255;   /* violet */
+}
+
+html, body {
+    background: #050508;          /* fallback */
+}
+
+/* ── LAYER 1 · base gradient + drifting orbs + grain ─────────── */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+
+    background-image:
+        /* film grain */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+        /* orbs */
+        radial-gradient(closest-side, rgba(var(--bg-accent),   .22), transparent 100%),
+        radial-gradient(closest-side, rgba(var(--bg-accent-3), .18), transparent 100%),
+        radial-gradient(closest-side, rgba(var(--bg-accent-2), .14), transparent 100%),
+        /* base gradient */
+        linear-gradient(165deg, #0c0c12 0%, #08080d 55%, #050508 100%);
+
+    background-size:
+        180px 180px,
+        70% 90%, 60% 85%, 65% 80%,
+        100% 100%;
+
+    background-position:
+        0 0,
+        0% 0%, 100% 10%, 45% 100%,
+        0 0;
+
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+
+    animation: bgOrbDrift 32s ease-in-out infinite;
+    will-change: background-position;
+}
+
+/* ── LAYER 2 · accent rim (thin light leak along the top) ────── */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(var(--bg-accent),   .45) 30%,
+        rgba(var(--bg-accent-2), .45) 70%,
+        transparent 100%);
+    background-size: 100% 1px;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    opacity: .8;
+}
+
+/* ── keyframes ───────────────────────────────────────────────── */
+@keyframes bgOrbDrift {
+    0%   { background-position:   0%   0%, 100%  10%,  45% 100%,  0 0; }
+    33%  { background-position:  18%  22%,  82%  28%,  30%  80%,  0 0; }
+    66%  { background-position:  -6%  12%, 108%  -4%,  60%  92%,  0 0; }
+    100% { background-position:   0%   0%, 100%  10%,  45% 100%,  0 0; }
+}
+
+/* ── reduced motion ──────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    body::before { animation: none; }
+}
+
+
+
+/* ====================================================================================================================================================================== */
+
+
+
+
+
+
+
 
 
 
