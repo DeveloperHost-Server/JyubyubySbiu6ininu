@@ -111,20 +111,7 @@ ytd-item-section-renderer:hover::before {
 
 
 
-/* ══════════════════════════════════════════════════════════════
-   AMBIENT PAGE BACKGROUND
-   drifting orbs · film grain · accent rim · fixed full-screen
-   ══════════════════════════════════════════════════════════════ */
 
-:root {
-    --bg-accent:   0, 112, 255;   /* blue   */
-    --bg-accent-2: 0, 200, 255;   /* cyan   */
-    --bg-accent-3: 107, 0, 255;   /* violet */
-}
-
-html, body {
-    background: #050508;          /* fallback */
-}
 
 
 
