@@ -200,6 +200,11 @@ tp-yt-app-drawer {
 #page-header.ytd-tabbed-page-header {background: radial-gradient(ellipse at 0% 20%, rgba(77, 166, 255, .03) 0%, transparent 50%), radial-gradient(ellipse at 0% 80%, rgba(77, 166, 255, .02) 0%, transparent 40%), #101014 !important;}
 
 #page-header-container.ytd-tabbed-page-header, #tabs-container.ytd-tabbed-page-header { background-color: #252424 !important; }
+
+
+.ytPageHeaderViewModelTitle {
+    color: #3ea6ff;
+}
 /* ====================================================================================================================================================================== */
 
 
