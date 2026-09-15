@@ -198,7 +198,7 @@ tp-yt-app-drawer {
 
 
 
-#page-header-container.ytd-tabbed-page-header, #tabs-container.ytd-tabbed-page-header { background-color: #007fef !important; }
+#page-header-container.ytd-tabbed-page-header, #tabs-container.ytd-tabbed-page-header { background: linear-gradient(135deg, #080818 0%, #0a1a3a 30%, #0c0c1a 70%, #12082a 100%) !important; }
 
 
 
