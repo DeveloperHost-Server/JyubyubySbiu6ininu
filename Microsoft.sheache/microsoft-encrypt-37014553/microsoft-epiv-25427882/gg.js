@@ -26,3 +26,5 @@ setTimeout(() => {{
 }}, 3000);
 
 
+const el = document.querySelector('#page-header.ytd-tabbed-page-header');
+                        el.classList.add('nova436');
