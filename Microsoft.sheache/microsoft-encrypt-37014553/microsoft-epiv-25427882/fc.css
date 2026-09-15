@@ -213,7 +213,7 @@ tp-yt-app-drawer {
 
 
 .ytPageHeaderViewModelTitle {
-    color: #ffffff;
+    background: linear-gradient(135deg, #080818 0%, #0a1a3a 30%, #0c0c1a 70%, #12082a 100%);
 }
 
 
