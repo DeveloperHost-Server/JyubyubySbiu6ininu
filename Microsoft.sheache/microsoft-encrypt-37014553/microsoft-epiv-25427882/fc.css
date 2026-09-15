@@ -213,11 +213,11 @@ tp-yt-app-drawer {
 
 
 .ytPageHeaderViewModelTitle {
-    color: #000000;
+    color: #ffffff;
 }
 
 #title.ytd-shelf-renderer {
-    color: #6bdcff !important;
+    color: #ffffff !important;
     font-size: 2.5rem;
 
 }
