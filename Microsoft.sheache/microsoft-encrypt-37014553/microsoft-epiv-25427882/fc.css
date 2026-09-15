@@ -189,6 +189,14 @@ div#content.style-scope.ytd-app {
 /*   ytd-app {background-image: url(https://www.ea.com/_next/static/media/M27-base-bg.ba9f358a.jpg);}   */
 
 
+
+tp-yt-app-drawer {
+
+   background: radial-gradient(ellipse at 0% 20%, rgba(77, 166, 255, .03) 0%, transparent 50%), radial-gradient(ellipse at 0% 80%, rgba(77, 166, 255, .02) 0%, transparent 40%), #101014;
+   
+}
+
+
 /* ====================================================================================================================================================================== */
 
 
