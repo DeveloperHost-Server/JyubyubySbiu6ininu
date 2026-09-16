@@ -170,65 +170,7 @@ ytd-item-section-renderer ytd-thumbnail img {
 
 
 
-yt-formatted-string.ytd-game-details-renderer {
-   
-    color: #ffffff !important;
-    font-family: Roboto, "Arial", sans-serif;
-    font-size: 2.0rem !important;
-    line-height: 3rem;
-    font-weight: 600;
-    
-}
 
-
-
-
-
-div#content.style-scope.ytd-app {
-    background-image: url(https://www.ea.com/_next/static/media/M27-base-bg.ba9f358a.jpg);
-    background-attachment: fixed;
-    background-size: cover;        /* scales image to fill container */
-    background-position: center;   /* centers the image */
-    background-repeat: no-repeat; /* prevents tiling */
-}
-
-
-
-/*   ytd-app {background-image: url(https://www.ea.com/_next/static/media/M27-base-bg.ba9f358a.jpg);}   */
-
-
-
-tp-yt-app-drawer {
-
-   background: radial-gradient(ellipse at 0% 20%, rgba(77, 166, 255, .03) 0%, transparent 50%), radial-gradient(ellipse at 0% 80%, rgba(77, 166, 255, .02) 0%, transparent 40%), #101014;
-   
-}
-
-
-
-#page-header-container.ytd-tabbed-page-header, #tabs-container.ytd-tabbed-page-header { background: linear-gradient(135deg, #080818 0%, #0a1a3a 30%, #0c0c1a 70%, #12082a 100%) !important; }
-
-
-
-
-#page-header.ytd-tabbed-page-header {
-   
-            /*      background: radial-gradient(ellipse at 0% 20%, rgba(77, 166, 255, .03) 0%, transparent 50%), radial-gradient(ellipse at 0% 80%, rgba(77, 166, 255, .02) 0%, transparent 40%), #101014 !important;      */
-                                    
-                                    }
-
-
-
-
-.ytPageHeaderViewModelTitle {
-    color: #ffffff;
-}
-
-#title.ytd-shelf-renderer {
-    color: #ffffff !important;
-    font-size: 2.5rem;
-
-}
 
 
 
