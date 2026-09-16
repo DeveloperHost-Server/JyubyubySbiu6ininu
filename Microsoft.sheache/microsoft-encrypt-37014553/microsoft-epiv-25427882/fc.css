@@ -232,8 +232,22 @@ tp-yt-app-drawer {
 
 
 
+/* ====================================================================================================================================================================== */
 
 
+.ubisoft-plus-particles { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+
+        .ubisoft-plus-particle {
+            position: absolute; width: 2px; height: 2px;
+            background: var(--accent-secondary); border-radius: 50%;
+            opacity: 0; animation: particleRise 6s ease-in-out infinite;
+        }
+
+        @keyframes particleRise {
+            0% { opacity: 0; transform: translateY(100%) scale(0); }
+            20% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-200px) scale(1); }
+        }
 
 
 /* ====================================================================================================================================================================== */
