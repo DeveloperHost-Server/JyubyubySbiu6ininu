@@ -1,1 +1,495 @@
+/* ============================================================
+   DEFAULT      BACKGROUND / THEME ONLY
+   ============================================================ */
+:root {{
+    --bg-color: #050508 !important;
+    --bg-secondary: #0c0c12 !important;
+    --card-bg: #12121a !important;
+    --card-bg-hover: #1a1a26 !important;
+    --text-primary: #f0f0f5 !important;
+    --text-secondary: #8888a0 !important;
+    --text-muted: #55556a !important;
+    --accent: #0070ff !important;
+    --accent-hover: #3d94ff !important;
+    --accent-secondary: #00c8ff !important;
+    --border: rgba(255, 255, 255, 0.06) !important;
+    --border-hover: rgba(255, 255, 255, 0.12) !important;
+    --glass: rgba(12, 12, 18, 0.7) !important;
+    --glass-border: rgba(255, 255, 255, 0.08) !important;
+}}
+
+* {{ margin: 0; padding: 0; box-sizing: border-box; }}
+
+html {{
+    scroll-behavior: smooth !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #333 var(--bg-color) !important;
+}}
+
+
+::-webkit-scrollbar {{ width: 6px; height: 6px; }}
+::-webkit-scrollbar-track {{ background: var(--bg-color); }}
+::-webkit-scrollbar-thumb {{ background: #333; border-radius: 3px; }}
+::-webkit-scrollbar-thumb:hover {{ background: #555; }}
+
+
+
+/* ══════════════════════════════════════════════════════════════════════════════════════════════════════════════ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ══════════════════════════════════════════════════════════════════
+   COOL BACKGROUND  ·  ytd-item-section-renderer
+   Deep-space glass · ambient orbs · film grain · accent rim
+   ══════════════════════════════════════════════════════════════════ */
+
+ytd-item-section-renderer {
+    /* ---- tunables ---- */
+    --sec-radius:     20px;
+    --sec-accent:     0, 112, 255;
+    --sec-accent-2:   0, 200, 255;
+    --sec-accent-3:   107, 0, 255;
+
+    position: relative;
+    isolation: isolate;              /* keeps z-index:-1 layers inside */
+    border-radius: var(--sec-radius);
+    background: linear-gradient(165deg, #12121a 0%, #0b0b12 55%, #08080d 100%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px 10px 4px;
+    margin-bottom: 24px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 24px 60px -34px rgba(0, 0, 0, 0.95);
+    transition: border-color .35s ease, box-shadow .35s ease;
+}
+
+/* ---------- LAYER 1 · drifting ambient orbs ---------- */
+ytd-item-section-renderer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    border-radius: inherit;
+    pointer-events: none;
+
+    background-image:
+        radial-gradient(closest-side, rgba(var(--sec-accent),   .28), transparent 100%),
+        radial-gradient(closest-side, rgba(var(--sec-accent-3), .24), transparent 100%),
+        radial-gradient(closest-side, rgba(var(--sec-accent-2), .18), transparent 100%);
+    background-size: 70% 90%, 60% 85%, 65% 80%;
+    background-position: 0% 0%, 100% 10%, 45% 100%;
+    background-repeat: no-repeat;
+
+    animation: secOrbDrift 26s ease-in-out infinite;
+    will-change: background-position;
+}
+
+@keyframes secOrbDrift {
+    0%   { background-position:   0%   0%, 100%  10%,  45% 100%; }
+    33%  { background-position:  18%  22%,  82%  28%,  30%  80%; }
+    66%  { background-position:  -6%  12%, 108%  -4%,  60%  92%; }
+    100% { background-position:   0%   0%, 100%  10%,  45% 100%; }
+}
+
+/* ---------- LAYER 2 · film grain + accent rim light ---------- */
+ytd-item-section-renderer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(90deg,
+            transparent 0%,
+            rgba(var(--sec-accent), .55) 30%,
+            rgba(var(--sec-accent-2), .55) 70%,
+            transparent 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 100% 1px, 180px 180px;
+    background-position: 0 0, 0 0;
+    background-repeat: no-repeat, repeat;
+
+    opacity: .9;
+    mix-blend-mode: normal;
+}
+/* grain needs its own low opacity — do it with a nested trick */
+ytd-item-section-renderer::after { opacity: .05; }
+/* …and put the rim line back at full strength */
+ytd-item-section-renderer {
+    background-clip: padding-box;
+}
+
+/* ---------- hover / focus state ---------- */
+ytd-item-section-renderer:hover {
+    border-color: rgba(var(--sec-accent), .32);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.07),
+        inset 0 0 120px -50px rgba(var(--sec-accent), .35),
+        0 28px 70px -32px rgba(0, 0, 0, .95),
+        0 0 60px -30px rgba(var(--sec-accent), .55);
+}
+ytd-item-section-renderer:hover::before { animation-duration: 14s; }
+
+/* ══════════════════════════════════════════════════════════════════
+   MAKE YOUTUBE'S OWN PAINT GET OUT OF THE WAY
+   ══════════════════════════════════════════════════════════════════ */
+
+ytd-item-section-renderer #contents,
+ytd-item-section-renderer #header,
+ytd-item-section-renderer > #contents,
+ytd-item-section-renderer > #header,
+ytd-item-section-renderer .ytd-item-section-renderer {
+    background: transparent !important;
+}
+
+/* kill YouTube's grey section separators inside the card */
+ytd-item-section-renderer #contents > * + * {
+    border-top-color: rgba(255, 255, 255, 0.045) !important;
+}
+
+/* headers inherit the ambient tone */
+ytd-item-section-renderer #header #title,
+ytd-item-section-renderer #title {
+    letter-spacing: -0.01em;
+    color: #f0f0f5;
+}
+
+/* ---------- glassy child cards ---------- */
+ytd-item-section-renderer ytd-rich-item-renderer,
+ytd-item-section-renderer ytd-video-renderer,
+ytd-item-section-renderer ytd-grid-video-renderer,
+ytd-item-section-renderer ytd-playlist-renderer,
+ytd-item-section-renderer ytd-channel-renderer {
+    border-radius: 14px;
+    transition: background-color .3s ease, transform .3s ease;
+}
+ytd-item-section-renderer ytd-rich-item-renderer:hover,
+ytd-item-section-renderer ytd-video-renderer:hover,
+ytd-item-section-renderer ytd-grid-video-renderer:hover {
+    background-color: rgba(255, 255, 255, 0.035);
+    transform: translateY(-1px);
+}
+
+/* thumbnails pick up the same rounding language */
+ytd-item-section-renderer ytd-thumbnail,
+ytd-item-section-renderer ytd-thumbnail img {
+    border-radius: 12px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE / MOTION
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+    ytd-item-section-renderer {
+        --sec-radius: 14px;
+        padding: 6px 6px 2px;
+        margin-bottom: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ytd-item-section-renderer::before { animation: none; }
+    ytd-item-section-renderer,
+    ytd-item-section-renderer * { transition: none !important; }
+}
+
+
+
+
+
+
+
+
+
+
+/* ====================================================================================================================================================================== */
+
+
+
+yt-formatted-string.ytd-game-details-renderer {
+   
+    color: #ffffff !important;
+    font-family: Roboto, "Arial", sans-serif;
+    font-size: 2.0rem !important;
+    line-height: 3rem;
+    font-weight: 600;
+    
+}
+
+
+
+
+
+div#content.style-scope.ytd-app {
+    background-image: url(https://www.ea.com/_next/static/media/M27-base-bg.ba9f358a.jpg);
+    background-attachment: fixed;
+    background-size: cover;        /* scales image to fill container */
+    background-position: center;   /* centers the image */
+    background-repeat: no-repeat; /* prevents tiling */
+}
+
+
+
+/*   ytd-app {background-image: url(https://www.ea.com/_next/static/media/M27-base-bg.ba9f358a.jpg);}   */
+
+
+
+tp-yt-app-drawer {
+
+   background: radial-gradient(ellipse at 0% 20%, rgba(77, 166, 255, .03) 0%, transparent 50%), radial-gradient(ellipse at 0% 80%, rgba(77, 166, 255, .02) 0%, transparent 40%), #101014;
+   
+}
+
+
+
+#page-header-container.ytd-tabbed-page-header, #tabs-container.ytd-tabbed-page-header { background: linear-gradient(135deg, #080818 0%, #0a1a3a 30%, #0c0c1a 70%, #12082a 100%) !important; }
+
+
+
+
+#page-header.ytd-tabbed-page-header {
+   
+            /*      background: radial-gradient(ellipse at 0% 20%, rgba(77, 166, 255, .03) 0%, transparent 50%), radial-gradient(ellipse at 0% 80%, rgba(77, 166, 255, .02) 0%, transparent 40%), #101014 !important;      */
+                                    
+                                    }
+
+
+
+
+.ytPageHeaderViewModelTitle {
+    color: #ffffff;
+}
+
+#title.ytd-shelf-renderer {
+    color: #ffffff !important;
+    font-size: 2.5rem;
+
+}
+
+
+
+
+/* ====Particles effect================================================================================================================================================================== 
+
+
+.ubisoft-plus-particles { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+
+        .ubisoft-plus-particle {
+            position: absolute; width: 2px; height: 2px;
+            background: var(--accent-secondary); border-radius: 50%;
+            opacity: 0; animation: particleRise 6s ease-in-out infinite;
+        }
+
+        @keyframes particleRise {
+            0% { opacity: 0; transform: translateY(100%) scale(0); }
+            20% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-200px) scale(1); }
+        }            
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =======================================#primary.ytd-watch-flexy=============================================================================================================================== */
+
+
+/* ============================================================
+   Cool background for #primary.ytd-watch-flexy — pure CSS
+   Mirrors the particle + aurora look from 12.html
+   ============================================================ */
+
+#primary.ytd-watch-flexy {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: #050508;
+
+  /* ---- Aurora layer stack (equivalent to the hover glow in 12.html) ---- */
+  background-image:
+    /* base fade */
+    linear-gradient(180deg, #06060c 0%, #0a0a14 45%, #050508 100%),
+    /* horizontal aurora sweep */
+    linear-gradient(115deg,
+      rgba(0,112,255,0)    0%,
+      rgba(0,112,255,.14) 35%,
+      rgba(138,92,255,.16) 55%,
+      rgba(0,200,255,.12) 75%,
+      rgba(0,112,255,0)  100%),
+    /* cyan bloom bottom-left */
+    radial-gradient(60% 55% at 15% 100%,
+      rgba(0,200,255,.18) 0%, transparent 70%),
+    /* violet bloom top-right */
+    radial-gradient(50% 50% at 90% 0%,
+      rgba(138,92,255,.16) 0%, transparent 70%);
+  background-size: 100% 100%, 220% 100%, 100% 100%, 100% 100%;
+  background-position: 0 0, -100% 0, 0 0, 0 0;
+
+  animation: primaryAurora 18s linear infinite;
+  transition: box-shadow .4s ease;
+}
+
+/* ---------- Particle field ---------- */
+#primary.ytd-watch-flexy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  /* 40 multicolor particles drawn as tiny radial gradients */
+  background-image:
+    radial-gradient(2px 2px at 4% 18%, #00c8ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 9% 62%, #3d94ff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 14% 33%, #8a5cff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 19% 78%, #5cf0ff, transparent 60%),
+    radial-gradient(2px 2px at 24% 8%,  #ffffff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 29% 51%, #00c8ff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 34% 88%, #3d94ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 39% 22%, #8a5cff, transparent 60%),
+    radial-gradient(2px 2px at 44% 71%,  #5cf0ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 49% 41%, #ffffff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 54% 94%, #00c8ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 59% 12%, #3d94ff, transparent 60%),
+    radial-gradient(2px 2px at 64% 57%,  #8a5cff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 69% 27%, #5cf0ff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 74% 82%, #ffffff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 79% 47%, #00c8ff, transparent 60%),
+    radial-gradient(2px 2px at 84% 6%,  #3d94ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 89% 66%, #8a5cff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 94% 38%, #5cf0ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 98% 88%, #ffffff, transparent 60%),
+    radial-gradient(2px 2px at 7% 44%,  #8a5cff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 12% 96%, #5cf0ff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 22% 24%, #ffffff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 27% 70%, #00c8ff, transparent 60%),
+    radial-gradient(2px 2px at 37% 3%,  #3d94ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 42% 47%, #8a5cff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 47% 84%, #5cf0ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 57% 33%, #ffffff, transparent 60%),
+    radial-gradient(2px 2px at 62% 74%,  #00c8ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 67% 16%, #3d94ff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 72% 62%, #8a5cff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 77% 92%, #5cf0ff, transparent 60%),
+    radial-gradient(2px 2px at 82% 25%,  #ffffff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 87% 53%, #00c8ff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 92% 8%,  #3d94ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 97% 76%, #8a5cff, transparent 60%),
+    radial-gradient(2px 2px at 3% 84%,  #5cf0ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 17% 12%, #ffffff, transparent 60%),
+    radial-gradient(2.5px 2.5px at 32% 59%, #00c8ff, transparent 60%),
+    radial-gradient(1.5px 1.5px at 52% 18%, #3d94ff, transparent 60%);
+
+  filter: drop-shadow(0 0 4px rgba(0,200,255,.55));
+  opacity: .85;
+
+  /* Drift + twinkle = the twinkle layer from 12.html */
+  animation:
+    primaryDrift   30s ease-in-out infinite alternate,
+    primaryTwinkle 4s  ease-in-out infinite;
+}
+
+/* ---------- Ambient glow + vignette ---------- */
+#primary.ytd-watch-flexy::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(400px circle at 50% 30%,
+      rgba(0,200,255,.10), transparent 65%),
+    radial-gradient(120% 120% at 50% 0%,
+      transparent 55%, rgba(0,0,0,.55) 100%);
+  animation: primaryPulse 6s ease-in-out infinite;
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes primaryAurora {
+  0%   { background-position: 0 0, -100% 0, 0 0, 0 0; }
+  100% { background-position: 0 0,  100% 0, 0 0, 0 0; }
+}
+
+@keyframes primaryDrift {
+  0%   { transform: translate3d(0, 0, 0)      scale(1); }
+  50%  { transform: translate3d(-2%, -1.5%, 0) scale(1.02); }
+  100% { transform: translate3d(2%, 1.5%, 0)   scale(1); }
+}
+
+@keyframes primaryTwinkle {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: 1; }
+}
+
+@keyframes primaryPulse {
+  0%, 100% { opacity: .7; }
+  50%      { opacity: 1; }
+}
+
+/* ---------- Hover: accelerate + bloom + ring ---------- */
+#primary.ytd-watch-flexy:hover {
+  animation-duration: 9s;
+  box-shadow:
+    0 0 0 1px rgba(0,200,255,.25),
+    0 0 40px -10px rgba(0,112,255,.45);
+}
+
+#primary.ytd-watch-flexy:hover::before {
+  animation-duration: 12s, 2s;
+  filter: drop-shadow(0 0 6px rgba(0,200,255,.9)) brightness(1.3);
+}
+
+#primary.ytd-watch-flexy:hover::after {
+  animation-duration: 3s;
+}
+
+/* ---------- Keep YouTube's content above the glow ---------- */
+#primary.ytd-watch-flexy > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+  #primary.ytd-watch-flexy,
+  #primary.ytd-watch-flexy::before,
+  #primary.ytd-watch-flexy::after {
+    animation: none !important;
+  }
+}
+
+
+
+
+
+
 
